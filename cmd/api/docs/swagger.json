@@ -1,12 +1,51 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is my API built using Go and httprouter",
-        "title": "My REST API",
+        "description": "This is book store API built using Go and httprouter",
+        "title": "Book Store API",
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
-    "basePath": "/api",
-    "paths": {}
+    "host": "localhost:4000",
+    "basePath": "/",
+    "paths": {
+        "/api/users/{id}": {
+            "get": {
+                "description": "Returns a single user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

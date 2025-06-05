@@ -14,19 +14,59 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/api/users/{id}": {
+            "get": {
+                "description": "Returns a single user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/api",
+	Host:             "localhost:4000",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "My REST API",
-	Description:      "This is my API built using Go and httprouter",
+	Title:            "Book Store API",
+	Description:      "This is book store API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+
 }
 
 func init() {
