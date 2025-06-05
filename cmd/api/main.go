@@ -50,6 +50,11 @@ type application struct {
 // @description This is book store API built using Go and httprouter
 // @host localhost:4000
 // @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 
 	var cfg config
@@ -82,7 +87,7 @@ func main() {
 
 	defer db.Close()
 
-	logger.Info("database connection pool establisehd!")
+	logger.Info("database connection pool established!")
 
 	app := &application{
 		config: cfg,
