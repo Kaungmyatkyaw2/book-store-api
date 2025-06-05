@@ -184,4 +184,10 @@ paths:
       summary: Health Check The API
       tags:
       - Healthcheck
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
