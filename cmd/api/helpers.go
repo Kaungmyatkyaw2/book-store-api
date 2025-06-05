@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/julienschmidt/httprouter"
 )
 
 type envelope map[string]interface{}
@@ -84,7 +83,6 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 
 		}
 
-		return err
 	}
 
 	err = dec.Decode(&struct{}{})
@@ -128,21 +126,4 @@ func (app *application) createJWTToken(userID, expDate int64) (string, error) {
 	}
 
 	return tokenString, nil
-}
-
-// GetUserByID godoc
-// @Summary Get user by ID
-// @Description Returns a single user
-// @Tags users
-// @Accept  json
-// @Produce  json
-// @Param   id  path  int  true  "User ID"
-// @Success 200 {string} string "User found"
-// @Failure 404 {string} string "User not found"
-// @Router /api/users/{id} [get]
-func (app *application) wrapHandler(h func(http.ResponseWriter, *http.Request, httprouter.Params)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ps := httprouter.ParamsFromContext(r.Context())
-		h(w, r, ps)
-	}
 }
