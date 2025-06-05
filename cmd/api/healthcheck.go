@@ -4,16 +4,27 @@ import (
 	"net/http"
 )
 
-// GetUserByID godoc
-// @Summary Get user by ID
-// @Description Returns a single user
-// @Tags users
-// @Accept  json
+// HealthCheck godoc
+// @Summary Health Check The API
+// @Description Returns an object that include environment and status of the API
+// @Tags Healthcheck
 // @Produce  json
-// @Param   id  path  int  true  "User ID"
-// @Success 200 {string} string "User found"
-// @Failure 404 {string} string "User not found"
-// @Router /api/users/{id} [get]
+// @Success 200 {object} map[string]string "OK" "Response body"
+// @Example {json} Success-Response:
+//
+//	{
+//	  "status": "available",
+//	  "environment": "development"
+//	}
+//
+// @Failure 500 {object} ErrorResponse "Internal Server Error"
+// @Example 500 {json} InternalServerErrorExample
+//
+//	{
+//	  "error": "the server encountered a problem and could not process your request"
+//	}
+//
+// @Router /v1/healthcheck [get]
 func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	data := envelope{
 		"status":      "available",

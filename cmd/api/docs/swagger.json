@@ -9,41 +9,42 @@
     "host": "localhost:4000",
     "basePath": "/",
     "paths": {
-        "/api/users/{id}": {
+        "/v1/healthcheck": {
             "get": {
-                "description": "Returns a single user",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Returns an object that include environment and status of the API",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "Healthcheck"
                 ],
-                "summary": "Get user by ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Health Check The API",
                 "responses": {
                     "200": {
-                        "description": "User found",
+                        "description": "OK\" \"Response body",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
-                    "404": {
-                        "description": "User not found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/main.ErrorResponse"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
                 }
             }
         }

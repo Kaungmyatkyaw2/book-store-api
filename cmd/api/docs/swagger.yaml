@@ -1,4 +1,10 @@
 basePath: /
+definitions:
+  main.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
 host: localhost:4000
 info:
   contact: {}
@@ -6,29 +12,23 @@ info:
   title: Book Store API
   version: "1.0"
 paths:
-  /api/users/{id}:
+  /v1/healthcheck:
     get:
-      consumes:
-      - application/json
-      description: Returns a single user
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: integer
+      description: Returns an object that include environment and status of the API
       produces:
       - application/json
       responses:
         "200":
-          description: User found
+          description: OK" "Response body
           schema:
-            type: string
-        "404":
-          description: User not found
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
-            type: string
-      summary: Get user by ID
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Health Check The API
       tags:
-      - users
+      - Healthcheck
 swagger: "2.0"
