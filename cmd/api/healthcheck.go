@@ -10,7 +10,7 @@ import (
 // @Tags Healthcheck
 // @Produce  json
 // @Success 200 {object} HealthCheckResponse
-// @Failure 500 {object} ErrorResponse
+// @Failure 500 {object} InternalServerErrorResponse
 // @Router /v1/healthcheck [get]
 func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	data := envelope{

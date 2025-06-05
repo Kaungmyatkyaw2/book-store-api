@@ -9,6 +9,17 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
 )
 
+// LoginAccount godoc
+// @Summary Log in to an account
+// @Description Login to an account
+// @Tags Authentication
+// @Param request body LoginRequestBody true "Login data"
+// @Produce  json
+// @Success 200 {object} LoginResponse "Login success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Failure 401 {object} GeneralErrorResponse "Invalid Credential Error"
+// @Router /v1/auth/login [post]
 func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Email    string `json:"email"`
@@ -63,7 +74,7 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.writeJson(w, http.StatusCreated, envelope{"token": token}, nil)
+	err = app.writeJson(w, http.StatusOK, envelope{"token": token}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

@@ -1,15 +1,75 @@
 basePath: /
 definitions:
-  main.ErrorResponse:
+  main.ActivateUserRequestBody:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  main.GeneralErrorResponse:
     properties:
       error:
-        type: string
+        additionalProperties:
+          type: string
+        type: object
     type: object
   main.HealthCheckResponse:
     properties:
       environment:
         type: string
       status:
+        type: string
+    type: object
+  main.InternalServerErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  main.LoginRequestBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  main.LoginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  main.RegisterUserRequestBody:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  main.RegisterUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/main.UserResponseDTO'
+    type: object
+  main.UserResponseDTO:
+    properties:
+      activated:
+        type: boolean
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
         type: string
     type: object
 host: localhost:4000
@@ -19,6 +79,94 @@ info:
   title: Book Store API
   version: "1.0"
 paths:
+  /v1/auth/activate:
+    put:
+      description: Activate for an account
+      parameters:
+      - description: User activation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.ActivateUserRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User activated success
+          schema:
+            $ref: '#/definitions/main.RegisterUserResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Activate registered account
+      tags:
+      - Authentication
+  /v1/auth/login:
+    post:
+      description: Login to an account
+      parameters:
+      - description: Login data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.LoginRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login success
+          schema:
+            $ref: '#/definitions/main.LoginResponse'
+        "401":
+          description: Invalid Credential Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Log in to an account
+      tags:
+      - Authentication
+  /v1/auth/register:
+    post:
+      description: Signup for an account
+      parameters:
+      - description: User registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.RegisterUserRequestBody'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: User signed up success
+          schema:
+            $ref: '#/definitions/main.RegisterUserResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Register account
+      tags:
+      - Authentication
   /v1/healthcheck:
     get:
       description: Returns an object that include environment and status of the API
@@ -32,7 +180,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/main.InternalServerErrorResponse'
       summary: Health Check The API
       tags:
       - Healthcheck

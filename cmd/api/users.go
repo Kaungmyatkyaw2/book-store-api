@@ -9,6 +9,16 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
 )
 
+// RegisterUser godoc
+// @Summary Register account
+// @Description Signup for an account
+// @Tags Authentication
+// @Param request body RegisterUserRequestBody true "User registration data"
+// @Produce  json
+// @Success 202 {object} RegisterUserResponse "User signed up success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Router /v1/auth/register [post]
 func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Name     string `json:"name"`
@@ -79,7 +89,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 
 	})
 
-	err = app.writeJson(w, http.StatusAccepted, envelope{"user": user}, nil)
+	err = app.writeJson(w, http.StatusAccepted, envelope{"data": user}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -87,6 +97,16 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 
 }
 
+// ActivateUser godoc
+// @Summary Activate registered account
+// @Description Activate for an account
+// @Tags Authentication
+// @Param request body ActivateUserRequestBody true "User activation data"
+// @Produce  json
+// @Success 200 {object} RegisterUserResponse "User activated success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Router /v1/auth/activate [put]
 func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		TokenPlaintext string `json:"token"`
@@ -142,7 +162,7 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = app.writeJson(w, http.StatusOK, envelope{"user": user}, nil)
+	err = app.writeJson(w, http.StatusOK, envelope{"data": user}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
