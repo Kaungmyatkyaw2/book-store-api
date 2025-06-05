@@ -130,6 +130,16 @@ func (app *application) createJWTToken(userID, expDate int64) (string, error) {
 	return tokenString, nil
 }
 
+// GetUserByID godoc
+// @Summary Get user by ID
+// @Description Get details of a user by ID
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param   id  path  int  true  "User ID"
+// @Success 200 {object} User
+// @Failure 404 {object} ErrorResponse
+// @Router /api/users/{id} [get]
 func (app *application) wrapHandler(h func(http.ResponseWriter, *http.Request, httprouter.Params)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ps := httprouter.ParamsFromContext(r.Context())

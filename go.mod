@@ -6,6 +6,7 @@ require (
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/lib/pq v1.10.9
+	github.com/swaggo/swag v1.8.1
 	golang.org/x/crypto v0.38.0
 )
 
@@ -24,7 +25,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
 	github.com/swaggo/http-swagger v1.3.4 // indirect
-	github.com/swaggo/swag v1.8.1 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/tools v0.1.12 // indirect

@@ -45,11 +45,11 @@ type application struct {
 	wg     sync.WaitGroup
 }
 
-// @title My REST API
+// @title Book Store API
 // @version 1.0
-// @description This is my API built using Go and httprouter
-// @host localhost:8080
-// @BasePath /api
+// @description This is book store API built using Go and httprouter
+// @host localhost:4000
+// @BasePath /
 func main() {
 
 	var cfg config

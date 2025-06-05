@@ -27,8 +27,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is my API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {

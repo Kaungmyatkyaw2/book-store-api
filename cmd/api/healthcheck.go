@@ -2,9 +2,11 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data := envelope{
 		"status":      "available",
 		"environment": app.config.env,
