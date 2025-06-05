@@ -4,3 +4,8 @@ package main
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
+
+type HealthCheckResponse struct {
+	Status      string `json:"status"`
+	Environment string `json:"environment"`
+}

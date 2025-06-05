@@ -5,6 +5,13 @@ definitions:
       error:
         type: string
     type: object
+  main.HealthCheckResponse:
+    properties:
+      environment:
+        type: string
+      status:
+        type: string
+    type: object
 host: localhost:4000
 info:
   contact: {}
@@ -19,11 +26,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK" "Response body
+          description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/main.HealthCheckResponse'
         "500":
           description: Internal Server Error
           schema:

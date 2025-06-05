@@ -27,12 +27,9 @@ const docTemplate = `{
                 "summary": "Health Check The API",
                 "responses": {
                     "200": {
-                        "description": "OK\" \"Response body",
+                        "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/main.HealthCheckResponse"
                         }
                     },
                     "500": {
@@ -50,6 +47,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "environment": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
