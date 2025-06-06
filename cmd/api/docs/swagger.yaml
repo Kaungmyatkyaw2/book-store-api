@@ -14,6 +14,11 @@ definitions:
           type: string
         type: object
     type: object
+  main.GoogleLoginResponse:
+    properties:
+      url:
+        type: string
+    type: object
   main.HealthCheckResponse:
     properties:
       environment:
@@ -63,6 +68,8 @@ definitions:
     properties:
       activated:
         type: boolean
+      authProvider:
+        type: string
       created_at:
         type: string
       email:
@@ -105,6 +112,44 @@ paths:
           schema:
             $ref: '#/definitions/main.InternalServerErrorResponse'
       summary: Activate registered account
+      tags:
+      - Authentication
+  /v1/auth/google:
+    get:
+      description: Login to an account using google oauth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return Redirect URL to continue Login with google
+          schema:
+            $ref: '#/definitions/main.GoogleLoginResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Log in with google
+      tags:
+      - Authentication
+  /v1/auth/google/callback:
+    get:
+      description: Callback for google successful login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login success
+          schema:
+            $ref: '#/definitions/main.LoginResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Callback for Google Login
       tags:
       - Authentication
   /v1/auth/login:

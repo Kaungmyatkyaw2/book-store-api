@@ -11,18 +11,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	CredentialAuthProvider = "credentials"
+	GoogleOauthProvider    = "google"
+)
+
 var (
 	ErrDuplicateEmail = errors.New("duplicate email")
 )
 
 type User struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Password  password  `json:"-"`
-	Activated bool      `json:"activated"`
-	Version   int       `json:"-"`
+	ID           int64     `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Picture      string    `json:"picture"`
+	Password     password  `json:"-"`
+	Activated    bool      `json:"activated"`
+	AuthProvider string    `json:"authProvider"`
+	Version      int       `json:"-"`
 }
 
 type password struct {
@@ -93,12 +100,12 @@ type UserModel struct {
 
 func (m UserModel) Insert(user *User) error {
 	query := `
-		INSERT INTO users (name, email, password_hash, activated) 
-		VALUES ($1, $2, $3, $4) 
+		INSERT INTO users (name, email, password_hash, activated, auth_provider, picture) 
+		VALUES ($1, $2, $3, $4, $5, $6) 
 		RETURNING id, created_at, version
 	`
 
-	args := []interface{}{user.Name, user.Email, user.Password.hash, user.Activated}
+	args := []interface{}{user.Name, user.Email, user.Password.hash, user.Activated, user.AuthProvider, user.Picture}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -153,7 +160,7 @@ func (m UserModel) GetByToken(scope, token string) (*User, error) {
 	tokenHash := sha256.Sum256([]byte(token))
 
 	query := `
-		SELECT users.id, users.created_at, users.name, users.email, users.password_hash, users.activated, users.version
+		SELECT users.id, users.created_at, users.name, users.email, users.password_hash, users.activated, users.auth_provider, users.version
 		FROM users
 		INNER JOIN tokens 
 		ON users.id = tokens.user_id
@@ -177,6 +184,7 @@ func (m UserModel) GetByToken(scope, token string) (*User, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.AuthProvider,
 		&user.Version,
 	)
 
@@ -194,7 +202,7 @@ func (m UserModel) GetByToken(scope, token string) (*User, error) {
 
 func (m UserModel) GetByEmail(email string) (*User, error) {
 	query := `
-		SELECT id, created_at, name, email, password_hash, activated, version
+		SELECT id, created_at, name, email, password_hash, activated, auth_provider, version
 		FROM users
 		WHERE email = $1
 	`
@@ -211,6 +219,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.AuthProvider,
 		&user.Version,
 	)
 

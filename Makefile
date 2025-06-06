@@ -7,7 +7,7 @@ confirm:
 
 .PHONY: run/api
 run/api: 
-	go run ./cmd/api -db-dsn=${DB_DSN} -jwt-secret={JWT_SECRET}
+	go run ./cmd/api -db-dsn=${DB_DSN} -jwt-secret=${JWT_SECRET} -oauth-redirect-url=${GOOGLE_OAUTH_REDIRECT_URL} -oauth-client-id=${GOOGLE_OAUTH_CLIENT_ID} -oauth-client-secret=${GOOGLE_OAUTH_CLIENT_SECRET}
 
 
 .PHONY: db/migrations/up

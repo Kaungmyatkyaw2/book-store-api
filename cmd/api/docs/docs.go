@@ -58,6 +58,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/google": {
+            "get": {
+                "description": "Login to an account using google oauth",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Log in with google",
+                "responses": {
+                    "200": {
+                        "description": "Return Redirect URL to continue Login with google",
+                        "schema": {
+                            "$ref": "#/definitions/main.GoogleLoginResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/google/callback": {
+            "get": {
+                "description": "Callback for google successful login",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Callback for Google Login",
+                "responses": {
+                    "200": {
+                        "description": "Login success",
+                        "schema": {
+                            "$ref": "#/definitions/main.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/login": {
             "post": {
                 "description": "Login to an account",
@@ -200,6 +258,14 @@ const docTemplate = `{
                 }
             }
         },
+        "main.GoogleLoginResponse": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "main.HealthCheckResponse": {
             "type": "object",
             "properties": {
@@ -274,6 +340,9 @@ const docTemplate = `{
             "properties": {
                 "activated": {
                     "type": "boolean"
+                },
+                "authProvider": {
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string"

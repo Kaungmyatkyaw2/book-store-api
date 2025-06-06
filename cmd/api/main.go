@@ -10,6 +10,8 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/data"
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/mailer"
 	"github.com/hashicorp/go-hclog"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 
 	_ "github.com/lib/pq"
 
@@ -35,14 +37,20 @@ type config struct {
 	jwt struct {
 		secret string
 	}
+	googleOauth struct {
+		redirectUrl  string
+		clientID     string
+		clientSecret string
+	}
 }
 
 type application struct {
-	config config
-	logger hclog.Logger
-	models data.Models
-	mailer mailer.Mailer
-	wg     sync.WaitGroup
+	config      config
+	logger      hclog.Logger
+	models      data.Models
+	mailer      mailer.Mailer
+	wg          sync.WaitGroup
+	googleOauth *oauth2.Config
 }
 
 // @title Book Store API
@@ -77,6 +85,10 @@ func main() {
 
 	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "JWT secret")
 
+	flag.StringVar(&cfg.googleOauth.redirectUrl, "oauth-redirect-url", "http://localhost:4000/v1/auth/google/callback", "Google oauth redirect url")
+	flag.StringVar(&cfg.googleOauth.clientID, "oauth-client-id", "", "Google oauth client id")
+	flag.StringVar(&cfg.googleOauth.clientSecret, "oauth-client-secret", "", "Google oauth client secret")
+
 	flag.Parse()
 
 	db, err := openDB(cfg)
@@ -89,11 +101,20 @@ func main() {
 
 	logger.Info("database connection pool established!")
 
+	googleOauthConfig := oauth2.Config{
+		ClientID:     cfg.googleOauth.clientID,
+		ClientSecret: cfg.googleOauth.clientSecret,
+		RedirectURL:  cfg.googleOauth.redirectUrl,
+		Scopes:       []string{"profile", "email"},
+		Endpoint:     google.Endpoint,
+	}
+
 	app := &application{
-		config: cfg,
-		logger: logger,
-		models: data.NewModels(db),
-		mailer: mailer.New(cfg.smtp.host, cfg.smtp.port, cfg.smtp.username, cfg.smtp.password, cfg.smtp.sender),
+		config:      cfg,
+		logger:      logger,
+		models:      data.NewModels(db),
+		mailer:      mailer.New(cfg.smtp.host, cfg.smtp.port, cfg.smtp.username, cfg.smtp.password, cfg.smtp.sender),
+		googleOauth: &googleOauthConfig,
 	}
 
 	err = app.serve()

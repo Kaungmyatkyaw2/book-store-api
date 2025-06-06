@@ -19,6 +19,9 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/auth/activate", app.activateUserHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/auth/login", app.loginHandler)
 
+	router.HandlerFunc(http.MethodGet, "/v1/auth/google", app.googleLoginHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/auth/google/callback", app.googleCallbackHandler)
+
 	router.Handler("GET", "/docs/*any", httpSwagger.WrapHandler)
 
 	return router

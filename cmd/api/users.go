@@ -53,6 +53,8 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	user.AuthProvider = data.CredentialAuthProvider
+
 	err = app.models.Users.Insert(user)
 
 	if err != nil {

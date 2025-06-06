@@ -6,11 +6,12 @@ import (
 
 // Responses TYPE DTOS
 type UserResponseDTO struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Activated bool      `json:"activated"`
+	ID           int64     `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	Activated    bool      `json:"activated"`
+	AuthProvider string    `json:"authProvider"`
 }
 
 // Requests Parts
@@ -46,6 +47,10 @@ type HealthCheckResponse struct {
 
 type RegisterUserResponse struct {
 	Data UserResponseDTO `json:"data"`
+}
+
+type GoogleLoginResponse struct {
+	Url string `json:"url"`
 }
 
 type LoginResponse struct {
