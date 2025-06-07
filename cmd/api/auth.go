@@ -159,6 +159,13 @@ func (app *application) googleCallbackHandler(w http.ResponseWriter, r *http.Req
 			return
 		}
 
+		err = app.setRefreshTokenCookie(w, existingUser)
+
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+
 		err = app.writeJson(w, http.StatusOK, envelope{"token": token}, nil)
 
 		if err != nil {
@@ -193,6 +200,13 @@ func (app *application) googleCallbackHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	token, err := app.createJWTToken(user.ID, time.Now().Add(time.Hour*24).Unix())
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.setRefreshTokenCookie(w, user)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
