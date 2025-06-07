@@ -165,6 +165,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/refresh": {
+            "post": {
+                "description": "Refresh Previous Access Token",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refresh access token",
+                "responses": {
+                    "200": {
+                        "description": "Return Redirect URL to continue Login with google",
+                        "schema": {
+                            "$ref": "#/definitions/main.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/register": {
             "post": {
                 "description": "Signup for an account",
@@ -303,7 +335,7 @@ const docTemplate = `{
         "main.LoginResponse": {
             "type": "object",
             "properties": {
-                "token": {
+                "acessToken": {
                     "type": "string"
                 }
             }

@@ -43,7 +43,7 @@ definitions:
     type: object
   main.LoginResponse:
     properties:
-      token:
+      acessToken:
         type: string
     type: object
   main.RegisterUserRequestBody:
@@ -182,6 +182,27 @@ paths:
           schema:
             $ref: '#/definitions/main.InternalServerErrorResponse'
       summary: Log in to an account
+      tags:
+      - Authentication
+  /v1/auth/refresh:
+    post:
+      description: Refresh Previous Access Token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return Redirect URL to continue Login with google
+          schema:
+            $ref: '#/definitions/main.LoginResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Refresh access token
       tags:
       - Authentication
   /v1/auth/register:

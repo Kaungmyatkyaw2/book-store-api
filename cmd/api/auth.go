@@ -221,6 +221,15 @@ func (app *application) googleCallbackHandler(w http.ResponseWriter, r *http.Req
 
 }
 
+// GoogleLogin godoc
+// @Summary Refresh access token
+// @Description Refresh Previous Access Token
+// @Tags Authentication
+// @Produce  json
+// @Success 200 {object} LoginResponse "Return Redirect URL to continue Login with google"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Router /v1/auth/refresh [post]
 func (app *application) refreshTokenHandler(w http.ResponseWriter, r *http.Request) {
 	rToken, err := r.Cookie("jwt")
 
@@ -261,7 +270,7 @@ func (app *application) refreshTokenHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = app.writeJson(w, http.StatusOK, envelope{"token": token}, nil)
+	err = app.writeJson(w, http.StatusOK, envelope{"accessToken": token}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
