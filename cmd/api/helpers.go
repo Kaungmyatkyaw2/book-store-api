@@ -10,7 +10,9 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/Kaungmyatkyaw2/book-store-api/internal/data"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -171,4 +173,42 @@ func (app *application) getOauthUserInfo(code string) (*GoogleOauthResponse, err
 	}
 
 	return &result, nil
+}
+
+func (app *application) setRefreshTokenCookie(w http.ResponseWriter, user *data.User) error {
+	refreshToken, err := app.createJWTToken(user.ID, time.Now().Add(time.Hour*24*7).Unix())
+
+	if err != nil {
+		return err
+	}
+
+	cookie := http.Cookie{
+		Name:     "jwt",
+		Value:    refreshToken,
+		Path:     "/",
+		MaxAge:   3600,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteNoneMode,
+	}
+
+	http.SetCookie(w, &cookie)
+
+	return nil
+}
+
+func (app *application) verifyJWTToken(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(app.config.jwt.secret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	return token, nil
 }

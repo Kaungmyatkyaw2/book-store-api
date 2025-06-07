@@ -3,10 +3,12 @@ package main
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/data"
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/oauth2"
 )
 
@@ -73,14 +75,21 @@ func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := app.createJWTToken(user.ID, time.Now().Add(time.Hour*24).Unix())
+	accessToken, err := app.createJWTToken(user.ID, time.Now().Add(time.Hour*24).Unix())
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJson(w, http.StatusOK, envelope{"token": token}, nil)
+	err = app.setRefreshTokenCookie(w, user)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJson(w, http.StatusOK, envelope{"accessToken": accessToken}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -157,7 +166,6 @@ func (app *application) googleCallbackHandler(w http.ResponseWriter, r *http.Req
 		}
 
 		return
-
 	}
 
 	user := &data.User{
@@ -185,6 +193,54 @@ func (app *application) googleCallbackHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	token, err := app.createJWTToken(user.ID, time.Now().Add(time.Hour*24).Unix())
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJson(w, http.StatusOK, envelope{"token": token}, nil)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+}
+
+func (app *application) refreshTokenHandler(w http.ResponseWriter, r *http.Request) {
+	rToken, err := r.Cookie("jwt")
+
+	if err != nil {
+		switch {
+		case errors.Is(err, http.ErrNoCookie):
+			app.badRequestResponse(w, r, errors.New("refresh token isn't found in cookies."))
+		default:
+			app.serverErrorResponse(w, r, err)
+
+		}
+		return
+	}
+
+	verifiedToken, err := app.verifyJWTToken(rToken.Value)
+
+	if err != nil {
+		switch {
+		case strings.HasPrefix(err.Error(), "invalid jwt"):
+			app.badRequestResponse(w, r, err)
+		default:
+			app.serverErrorResponse(w, r, err)
+
+		}
+		return
+	}
+
+	var userID int64
+
+	if claims, ok := verifiedToken.Claims.(jwt.MapClaims); ok {
+		userID = int64(claims["userID"].(float64))
+	}
+
+	token, err := app.createJWTToken(userID, time.Now().Add(time.Hour*24).Unix())
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
