@@ -15,7 +15,7 @@ func (app *application) logError(r *http.Request, err error) {
 func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, status int, message interface{}) {
 	env := envelope{"error": message}
 
-	err := app.writeJson(w, status, env, nil)
+	err := app.writeJSON(w, status, env, nil)
 
 	if err != nil {
 		app.logError(r, err)
@@ -56,4 +56,20 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
 	message := "invalid authentication credentials"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", "Bearer")
+	message := "invalid or missing authentication token"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+func (app *application) authenticationRequiredResponse(w http.ResponseWriter, r *http.Request) {
+	message := "you must be authenticated to access this resource"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
+func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.Request) {
+	message := "your user account must be activated to access this resource"
+	app.errorResponse(w, r, http.StatusForbidden, message)
 }

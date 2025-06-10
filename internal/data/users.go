@@ -22,7 +22,7 @@ var (
 
 type User struct {
 	ID           int64     `json:"id"`
-	CreatedAt    time.Time `json:"created_at"`
+	CreatedAt    time.Time `json:"createdAt"`
 	Name         string    `json:"name"`
 	Email        string    `json:"email"`
 	Picture      string    `json:"picture"`
@@ -213,6 +213,41 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, query, email).Scan(
+		&user.ID,
+		&user.CreatedAt,
+		&user.Name,
+		&user.Email,
+		&user.Password.hash,
+		&user.Activated,
+		&user.AuthProvider,
+		&user.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+	return &user, nil
+
+}
+
+func (m UserModel) GetByID(id int64) (*User, error) {
+	query := `
+		SELECT id, created_at, name, email, password_hash, activated, auth_provider, version
+		FROM users
+		WHERE id = $1
+	`
+
+	var user User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.Name,

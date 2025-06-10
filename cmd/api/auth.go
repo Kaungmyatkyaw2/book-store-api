@@ -109,7 +109,7 @@ func (app *application) refreshTokenHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		switch {
 		case strings.HasPrefix(err.Error(), "invalid jwt"):
-			app.badRequestResponse(w, r, err)
+			app.invalidAuthenticationTokenResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
 

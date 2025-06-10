@@ -70,5 +70,5 @@ func (app *application) issueAccessToken(w http.ResponseWriter, userID int64) er
 		return err
 	}
 
-	return app.writeJson(w, http.StatusOK, envelope{"accessToken": accessToken}, nil)
+	return app.writeJSON(w, http.StatusOK, envelope{"accessToken": accessToken}, nil)
 }

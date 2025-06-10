@@ -99,7 +99,7 @@ func (app *application) googleLoginHandler(w http.ResponseWriter, r *http.Reques
 
 	url := app.googleOauth.AuthCodeURL(oauthState, oauth2.AccessTypeOffline, oauth2.ApprovalForce)
 
-	err := app.writeJson(w, http.StatusOK, envelope{"url": url}, nil)
+	err := app.writeJSON(w, http.StatusOK, envelope{"url": url}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
