@@ -14,6 +14,16 @@ type UserResponseDTO struct {
 	AuthProvider string    `json:"authProvider"`
 }
 
+type BookResponseDTO struct {
+	ID           int64      `json:"id"`
+	Title        string     `json:"string"`
+	UserID       int64      `json:"userId"`
+	CoverPicture string     `json:"coverPicture"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	IsPublished  bool       `json:"isPublished"`
+	PublishedAt  *time.Time `json:"publishedAt"`
+}
+
 // Requests Parts
 
 type RegisterUserRequestBody struct {
@@ -31,12 +41,28 @@ type LoginRequestBody struct {
 	Password string `json:"password"  binding:"required"`
 }
 
+type CreateBookBody struct {
+	Title        string `json:"title"`
+	CoverPicture string `json:"coverPicture"`
+}
+
+type UpdateBookBody struct {
+	Title        string     `json:"title"`
+	CoverPicture string     `json:"coverPicture"`
+	IsPublished  bool       `json:"isPublished"`
+	PublishedAt  *time.Time `json:"publishedAt"`
+}
+
 // Responses
 type InternalServerErrorResponse struct {
 	Error string `json:"error"`
 }
 
 type GeneralErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type ValidationErrorResponse struct {
 	Error map[string]string `json:"error"`
 }
 
@@ -55,4 +81,16 @@ type GoogleLoginResponse struct {
 
 type LoginResponse struct {
 	AccessToken string `json:"acessToken"`
+}
+
+type GetBooksResponse struct {
+	Data []BookResponseDTO `json:"data"`
+}
+
+type BookResponse struct {
+	Data BookResponseDTO `json:"data"`
+}
+
+type DeleteSuccessResponse struct {
+	Message string `json:"message"`
 }

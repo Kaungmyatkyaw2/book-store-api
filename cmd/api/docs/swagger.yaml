@@ -7,12 +7,51 @@ definitions:
     required:
     - token
     type: object
+  main.BookResponse:
+    properties:
+      data:
+        $ref: '#/definitions/main.BookResponseDTO'
+    type: object
+  main.BookResponseDTO:
+    properties:
+      coverPicture:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isPublished:
+        type: boolean
+      publishedAt:
+        type: string
+      string:
+        type: string
+      userId:
+        type: integer
+    type: object
+  main.CreateBookBody:
+    properties:
+      coverPicture:
+        type: string
+      title:
+        type: string
+    type: object
+  main.DeleteSuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
   main.GeneralErrorResponse:
     properties:
       error:
-        additionalProperties:
-          type: string
-        type: object
+        type: string
+    type: object
+  main.GetBooksResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/main.BookResponseDTO'
+        type: array
     type: object
   main.GoogleLoginResponse:
     properties:
@@ -64,6 +103,17 @@ definitions:
       data:
         $ref: '#/definitions/main.UserResponseDTO'
     type: object
+  main.UpdateBookBody:
+    properties:
+      coverPicture:
+        type: string
+      isPublished:
+        type: boolean
+      publishedAt:
+        type: string
+      title:
+        type: string
+    type: object
   main.UserResponseDTO:
     properties:
       activated:
@@ -78,6 +128,13 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  main.ValidationErrorResponse:
+    properties:
+      error:
+        additionalProperties:
+          type: string
+        type: object
     type: object
 host: localhost:4000
 info:
@@ -106,7 +163,7 @@ paths:
         "422":
           description: Validation Error
           schema:
-            $ref: '#/definitions/main.GeneralErrorResponse'
+            $ref: '#/definitions/main.ValidationErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -176,7 +233,7 @@ paths:
         "422":
           description: Validation Error
           schema:
-            $ref: '#/definitions/main.GeneralErrorResponse'
+            $ref: '#/definitions/main.ValidationErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -225,7 +282,7 @@ paths:
         "422":
           description: Validation Error
           schema:
-            $ref: '#/definitions/main.GeneralErrorResponse'
+            $ref: '#/definitions/main.ValidationErrorResponse'
         "500":
           description: Internal Server Error
           schema:
@@ -233,6 +290,137 @@ paths:
       summary: Register account
       tags:
       - Authentication
+  /v1/books:
+    get:
+      description: Get All Created Books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User activated success
+          schema:
+            $ref: '#/definitions/main.GetBooksResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get All Books
+      tags:
+      - Books
+    post:
+      description: Create Books
+      parameters:
+      - description: Book data to create
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateBookBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book creation success
+          schema:
+            $ref: '#/definitions/main.BookResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Create Books
+      tags:
+      - Books
+  /v1/books/{id}:
+    delete:
+      description: Delete Book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted book successfully
+          schema:
+            $ref: '#/definitions/main.DeleteSuccessResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "403":
+          description: Permission Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Delete Book
+      tags:
+      - Books
+    patch:
+      description: Update Book
+      parameters:
+      - description: Book data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.UpdateBookBody'
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated book successfully
+          schema:
+            $ref: '#/definitions/main.BookResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "403":
+          description: Permission Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Update Book
+      tags:
+      - Books
   /v1/healthcheck:
     get:
       description: Returns an object that include environment and status of the API

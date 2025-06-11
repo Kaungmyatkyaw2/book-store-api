@@ -40,7 +40,7 @@
                     "422": {
                         "description": "Validation Error",
                         "schema": {
-                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
                         }
                     },
                     "500": {
@@ -147,7 +147,7 @@
                     "422": {
                         "description": "Validation Error",
                         "schema": {
-                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
                         }
                     },
                     "500": {
@@ -222,7 +222,205 @@
                     "422": {
                         "description": "Validation Error",
                         "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/books": {
+            "get": {
+                "description": "Get All Created Books",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get All Books",
+                "responses": {
+                    "200": {
+                        "description": "User activated success",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetBooksResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Books",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Create Books",
+                "parameters": [
+                    {
+                        "description": "Book data to create",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.CreateBookBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book creation success",
+                        "schema": {
+                            "$ref": "#/definitions/main.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
                             "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/books/{id}": {
+            "delete": {
+                "description": "Delete Book",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Delete Book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted book successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.DeleteSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Permission Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update Book",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update Book",
+                "parameters": [
+                    {
+                        "description": "Book data to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.UpdateBookBody"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated book successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Permission Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
                         }
                     },
                     "500": {
@@ -273,13 +471,74 @@
                 }
             }
         },
+        "main.BookResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/main.BookResponseDTO"
+                }
+            }
+        },
+        "main.BookResponseDTO": {
+            "type": "object",
+            "properties": {
+                "coverPicture": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isPublished": {
+                    "type": "boolean"
+                },
+                "publishedAt": {
+                    "type": "string"
+                },
+                "string": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "main.CreateBookBody": {
+            "type": "object",
+            "properties": {
+                "coverPicture": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.DeleteSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "main.GeneralErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
+                    "type": "string"
+                }
+            }
+        },
+        "main.GetBooksResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/main.BookResponseDTO"
                     }
                 }
             }
@@ -361,6 +620,23 @@
                 }
             }
         },
+        "main.UpdateBookBody": {
+            "type": "object",
+            "properties": {
+                "coverPicture": {
+                    "type": "string"
+                },
+                "isPublished": {
+                    "type": "boolean"
+                },
+                "publishedAt": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "main.UserResponseDTO": {
             "type": "object",
             "properties": {
@@ -381,6 +657,17 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "main.ValidationErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,14 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
 )
 
+// GetAllBooks godoc
+// @Summary Get All Books
+// @Description Get All Created Books
+// @Tags Books
+// @Produce  json
+// @Success 200 {object} GetBooksResponse "User activated success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Router /v1/books [get]
 func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) {
 
 	books, err := app.models.Books.GetAll()
@@ -25,6 +34,18 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 
 }
 
+// CreateBook godoc
+// @Summary Create Books
+// @Description Create Books
+// @Tags Books
+// @Param request body CreateBookBody true "Book data to create"
+// @Produce  json
+// @Success 200 {object} BookResponse "Book creation success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
+// @Router /v1/books [post]
 func (app *application) createBookHandler(w http.ResponseWriter, r *http.Request) {
 
 	user := app.contextGetUser(r)
@@ -72,6 +93,145 @@ func (app *application) createBookHandler(w http.ResponseWriter, r *http.Request
 	headers.Set("Location", fmt.Sprintf("/v1/books/%d", book.ID))
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"data": book}, headers)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+// UpdateBook godoc
+// @Summary Update Book
+// @Description Update Book
+// @Tags Books
+// @Param request body UpdateBookBody true "Book data to update"
+// @Param id path int true "Book ID"
+// @Produce  json
+// @Success 200 {object} BookResponse "Updated book successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 403 {object} GeneralErrorResponse "Permission Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
+// @Router /v1/books/{id} [patch]
+func (app *application) updateBookHandler(w http.ResponseWriter, r *http.Request) {
+
+	user := app.contextGetUser(r)
+
+	id, err := app.readIDParam(r)
+
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	book, err := app.models.Books.Get(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	if book.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	var input struct {
+		Title        *string `json:"title"`
+		CoverPicture *string `json:"coverPicture"`
+		IsPublished  *bool   `json:"isPublished"`
+	}
+
+	err = app.readJSON(w, r, &input)
+
+	v := validator.New()
+
+	if data.ValidateBook(v, book); !v.IsValid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Books.Update(book)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": book}, nil)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+}
+
+// Deletebook godoc
+// @Summary Delete Book
+// @Description Delete Book
+// @Tags Books
+// @Produce  json
+// @Param id path int true "Book ID"
+// @Success 200 {object} DeleteSuccessResponse "Deleted book successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 403 {object} GeneralErrorResponse "Permission Error"
+// @Router /v1/books/{id} [delete]
+func (app *application) deleteBookHandler(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+
+	id, err := app.readIDParam(r)
+
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	book, err := app.models.Books.Get(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	if book.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.Books.Delete(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "book successfully deleted"}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

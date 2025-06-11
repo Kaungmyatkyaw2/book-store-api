@@ -17,7 +17,7 @@ import (
 // @Produce  json
 // @Success 202 {object} RegisterUserResponse "User signed up success"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
-// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
 // @Router /v1/auth/register [post]
 func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
@@ -107,7 +107,7 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 // @Produce  json
 // @Success 200 {object} RegisterUserResponse "User activated success"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
-// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
 // @Router /v1/auth/activate [put]
 func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {

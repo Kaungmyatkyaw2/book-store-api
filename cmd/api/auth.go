@@ -18,7 +18,7 @@ import (
 // @Produce  json
 // @Success 200 {object} LoginResponse "Login success"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
-// @Failure 422 {object} GeneralErrorResponse "Validation Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
 // @Failure 401 {object} GeneralErrorResponse "Invalid Credential Error"
 // @Router /v1/auth/login [post]
 func (app *application) loginHandler(w http.ResponseWriter, r *http.Request) {

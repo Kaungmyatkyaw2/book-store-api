@@ -60,8 +60,6 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		app.logger.Info("user id", user.ID)
-
 		r = app.contextSetUser(r, user)
 		next.ServeHTTP(w, r)
 
