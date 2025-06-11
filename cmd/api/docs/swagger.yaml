@@ -297,7 +297,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: User activated success
+          description: Fetched Books successfully
           schema:
             $ref: '#/definitions/main.GetBooksResponse'
         "500":
@@ -375,6 +375,32 @@ paths:
           schema:
             $ref: '#/definitions/main.InternalServerErrorResponse'
       summary: Delete Book
+      tags:
+      - Books
+    get:
+      description: Get Specific Book By ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User activated success
+          schema:
+            $ref: '#/definitions/main.BookResponse'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get Book By ID
       tags:
       - Books
     patch:

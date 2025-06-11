@@ -33,3 +33,13 @@ func (v *Validator) Check(ok bool, key, message string) {
 func Matches(value string, rgx regexp.Regexp) bool {
 	return rgx.MatchString(value)
 }
+
+func In(value string, list ...string) bool {
+	for i := range list {
+		if value == list[i] {
+			return true
+		}
+	}
+
+	return false
+}

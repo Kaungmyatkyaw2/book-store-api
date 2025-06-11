@@ -252,7 +252,7 @@ const docTemplate = `{
                 "summary": "Get All Books",
                 "responses": {
                     "200": {
-                        "description": "User activated success",
+                        "description": "Fetched Books successfully",
                         "schema": {
                             "$ref": "#/definitions/main.GetBooksResponse"
                         }
@@ -320,6 +320,45 @@ const docTemplate = `{
             }
         },
         "/v1/books/{id}": {
+            "get": {
+                "description": "Get Specific Book By ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get Book By ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User activated success",
+                        "schema": {
+                            "$ref": "#/definitions/main.BookResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "Delete Book",
                 "produces": [
@@ -698,7 +737,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is book store API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-
 }
 
 func init() {

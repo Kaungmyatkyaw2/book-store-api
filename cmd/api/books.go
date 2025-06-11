@@ -14,12 +14,35 @@ import (
 // @Description Get All Created Books
 // @Tags Books
 // @Produce  json
-// @Success 200 {object} GetBooksResponse "User activated success"
+// @Success 200 {object} GetBooksResponse "Fetched Books successfully"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
 // @Router /v1/books [get]
 func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) {
 
-	books, err := app.models.Books.GetAll()
+	var input struct {
+		Title string
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Title = app.readString(qs, "title", "")
+
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+
+	input.Filters.Sort = app.readString(qs, "sort", "created_at")
+
+	input.Filters.SortSafelist = []string{"id", "title", "created_at", "published_at", "-id", "-title", "-created_at", "-published_at"}
+
+	if data.ValidateFilter(v, input.Filters); !v.IsValid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	books, err := app.models.Books.GetAll(input.Title, input.Filters)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -27,6 +50,46 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"data": books}, nil)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+}
+
+// GetBookById godoc
+// @Summary Get Book By ID
+// @Description Get Specific Book By ID
+// @Tags Books
+// @Produce  json
+// @Param id path int true "Book ID"
+// @Success 200 {object} BookResponse "User activated success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 404 {object} GeneralErrorResponse "Book not found"
+// @Router /v1/books/{id} [get]
+func (app *application) getBookByIDHandler(w http.ResponseWriter, r *http.Request) {
+
+	id, err := app.readIDParam(r)
+
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	book, err := app.models.Books.Get(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": book}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

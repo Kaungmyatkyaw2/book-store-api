@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
@@ -30,16 +31,18 @@ type BookModel struct {
 	DB *sql.DB
 }
 
-func (m BookModel) GetAll() ([]*Book, error) {
-	query := `
+func (m BookModel) GetAll(title string, filters Filters) ([]*Book, error) {
+	query := fmt.Sprintf(`
 	SELECT count(*) OVER(), id,created_at,title,cover_picture,user_id,version, is_published, published_at 
 	FROM books	
-	`
+	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '')
+	ORDER BY %s %s, id ASC
+	`, filters.sortColumn(), filters.sortDirecton())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{}
+	args := []any{title}
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {

@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/auth/refresh", app.refreshTokenHandler)
 
 	router.HandlerFunc(http.MethodGet, "/v1/books", app.getBooksHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/books/:id", app.getBookByIDHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/books", app.requireActivatedUser(app.createBookHandler))
 	router.HandlerFunc(http.MethodPatch, "/v1/books/:id", app.requireActivatedUser(app.updateBookHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/books/:id", app.requireActivatedUser(app.deleteBookHandler))
