@@ -250,6 +250,26 @@ const docTemplate = `{
                     "Books"
                 ],
                 "summary": "Get All Books",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page (default: 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field, e.g. 'name' or '-createdAt' for descending",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Fetched Books successfully",
@@ -585,6 +605,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/main.BookResponseDTO"
                     }
+                },
+                "metadata": {
+                    "$ref": "#/definitions/main.MetadataDto"
                 }
             }
         },
@@ -635,6 +658,26 @@ const docTemplate = `{
             "properties": {
                 "acessToken": {
                     "type": "string"
+                }
+            }
+        },
+        "main.MetadataDto": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "firstPage": {
+                    "type": "integer"
+                },
+                "lastPage": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "totalRecords": {
+                    "type": "integer"
                 }
             }
         },
@@ -737,6 +780,7 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is book store API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+
 }
 
 func init() {

@@ -5,6 +5,15 @@ import (
 )
 
 // Responses TYPE DTOS
+
+type MetadataDto struct {
+	CurrentPage  int `json:"currentPage,omitempty"`
+	PageSize     int `json:"pageSize,omitempty"`
+	FirstPage    int `json:"firstPage,omitempty"`
+	LastPage     int `json:"lastPage,omitempty"`
+	TotalRecords int `json:"totalRecords,omitempty"`
+}
+
 type UserResponseDTO struct {
 	ID           int64     `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
@@ -84,7 +93,8 @@ type LoginResponse struct {
 }
 
 type GetBooksResponse struct {
-	Data []BookResponseDTO `json:"data"`
+	Data     []BookResponseDTO `json:"data"`
+	Metadata MetadataDto       `json:"metadata"`
 }
 
 type BookResponse struct {

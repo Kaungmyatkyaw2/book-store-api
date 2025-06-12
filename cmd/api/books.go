@@ -14,6 +14,9 @@ import (
 // @Description Get All Created Books
 // @Tags Books
 // @Produce  json
+// @Param        page   query     int     false  "Page number (default: 1)"
+// @Param        limit  query     int     false  "Items per page (default: 10)"
+// @Param        sort   query     string  false  "Sort by field, e.g. 'name' or '-createdAt' for descending"
 // @Success 200 {object} GetBooksResponse "Fetched Books successfully"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
 // @Router /v1/books [get]
@@ -31,7 +34,7 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 	input.Title = app.readString(qs, "title", "")
 
 	input.Filters.Page = app.readInt(qs, "page", 1, v)
-	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+	input.Filters.PageSize = app.readInt(qs, "limit", 20, v)
 
 	input.Filters.Sort = app.readString(qs, "sort", "created_at")
 
@@ -42,14 +45,14 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	books, err := app.models.Books.GetAll(input.Title, input.Filters)
+	books, metadata, err := app.models.Books.GetAll(input.Title, input.Filters)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"data": books}, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": books, "metadata": metadata}, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

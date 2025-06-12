@@ -1,6 +1,7 @@
 package data
 
 import (
+	"math"
 	"strings"
 
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
@@ -16,7 +17,7 @@ type Filters struct {
 type Metadata struct {
 	CurrentPage  int `json:"currentPage,omitempty"`
 	PageSize     int `json:"pageSize,omitempty"`
-	FistPage     int `json:"firstPage,omitempty"`
+	FirstPage    int `json:"firstPage,omitempty"`
 	LastPage     int `json:"lastPage,omitempty"`
 	TotalRecords int `json:"totalRecords,omitempty"`
 }
@@ -47,4 +48,26 @@ func (f Filters) sortDirecton() string {
 	}
 
 	return "ASC"
+}
+
+func (f Filters) limit() int {
+	return f.PageSize
+}
+
+func (f Filters) offset() int {
+	return (f.Page - 1) * f.PageSize
+}
+
+func calculateMetadata(totalRecords, page, pageSize int) Metadata {
+	if totalRecords == 0 {
+		return Metadata{}
+	}
+
+	return Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     int(math.Ceil(float64(totalRecords) / float64(pageSize))),
+		TotalRecords: totalRecords,
+	}
 }

@@ -31,22 +31,23 @@ type BookModel struct {
 	DB *sql.DB
 }
 
-func (m BookModel) GetAll(title string, filters Filters) ([]*Book, error) {
+func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, error) {
 	query := fmt.Sprintf(`
 	SELECT count(*) OVER(), id,created_at,title,cover_picture,user_id,version, is_published, published_at 
 	FROM books	
 	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '')
 	ORDER BY %s %s, id ASC
+	LIMIT $2 OFFSET $3
 	`, filters.sortColumn(), filters.sortDirecton())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{title}
+	args := []any{title, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer rows.Close()
@@ -70,17 +71,19 @@ func (m BookModel) GetAll(title string, filters Filters) ([]*Book, error) {
 		)
 
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		books = append(books, &book)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return books, nil
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return books, &metadata, nil
 
 }
 
