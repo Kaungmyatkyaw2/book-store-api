@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHealthCheck(t *testing.T) {
@@ -14,11 +16,7 @@ func TestHealthCheck(t *testing.T) {
 
 	code, _, body := ts.get(t, "/v1/healthcheck")
 
-	if code != http.StatusOK {
-		t.Errorf("want %d; got %d", http.StatusOK, code)
-	}
+	assert.Equal(t, http.StatusOK, code, "want status code 200")
+	assert.Equal(t, "available", body["status"], "want body.status available")
 
-	if body["status"] != "available" {
-		t.Errorf("want status to equal %q", "available")
-	}
 }
