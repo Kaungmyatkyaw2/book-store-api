@@ -35,7 +35,7 @@ func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, er
 	query := fmt.Sprintf(`
 	SELECT count(*) OVER(), id,created_at,title,cover_picture,user_id,version, is_published, published_at 
 	FROM books	
-	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '')
+	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '') AND is_published = true
 	ORDER BY %s %s, id ASC
 	LIMIT $2 OFFSET $3
 	`, filters.sortColumn(), filters.sortDirecton())
