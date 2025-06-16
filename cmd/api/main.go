@@ -48,7 +48,7 @@ type application struct {
 	config      config
 	logger      hclog.Logger
 	models      data.Models
-	mailer      mailer.Mailer
+	mailer      mailer.IMailer
 	wg          sync.WaitGroup
 	googleOauth *oauth2.Config
 }

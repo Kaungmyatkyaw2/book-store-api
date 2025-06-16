@@ -96,7 +96,7 @@ func (app *application) refreshTokenHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		switch {
 		case errors.Is(err, http.ErrNoCookie):
-			app.badRequestResponse(w, r, errors.New("refresh token isn't found in cookies."))
+			app.badRequestResponse(w, r, errors.New("refresh token isn't found in cookies"))
 		default:
 			app.serverErrorResponse(w, r, err)
 

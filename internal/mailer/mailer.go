@@ -12,6 +12,10 @@ import (
 //go:embed "templates"
 var templateFS embed.FS
 
+type IMailer interface {
+	Send(receipent, templateFile string, data interface{}) error
+}
+
 type Mailer struct {
 	dialer *mail.Dialer
 	sender string

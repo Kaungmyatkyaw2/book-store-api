@@ -216,6 +216,11 @@ func (app *application) updateBookHandler(w http.ResponseWriter, r *http.Request
 
 	err = app.readJSON(w, r, &input)
 
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
 	v := validator.New()
 
 	if data.ValidateBook(v, book); !v.IsValid() {
