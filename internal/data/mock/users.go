@@ -8,12 +8,12 @@ import (
 
 var ValidActivationToken = "valid-token"
 
-var mockUser = &data.User{
+var MockUser = &data.User{
 	ID:           1,
 	Name:         "Alice",
 	Email:        "alice@example.com",
-	CreatedAt:    time.Now(),
-	Activated:    true,
+	CreatedAt:    time.Date(2025, time.April, 3, 2, 2, 2, 2, time.UTC),
+	Activated:    false,
 	AuthProvider: data.CredentialAuthProvider,
 }
 
@@ -43,14 +43,14 @@ func (m *UserModel) GetByToken(scope, token string) (*data.User, error) {
 		return nil, data.ErrRecordNotFound
 	}
 
-	return mockUser, nil
+	return MockUser, nil
 }
 func (m *UserModel) GetByEmail(email string) (*data.User, error) {
 	if email != "alice@example.com" {
 		return nil, data.ErrRecordNotFound
 	}
 
-	return mockUser, nil
+	return MockUser, nil
 }
 func (m *UserModel) GetByID(id int64) (*data.User, error) {
 
@@ -58,6 +58,6 @@ func (m *UserModel) GetByID(id int64) (*data.User, error) {
 		return nil, data.ErrRecordNotFound
 	}
 
-	return mockUser, nil
+	return MockUser, nil
 
 }

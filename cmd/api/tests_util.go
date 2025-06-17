@@ -82,3 +82,11 @@ func (ts *testServer) post(t *testing.T, urlPath string, body interface{}) (int,
 
 	return rs.StatusCode, rs.Header, data
 }
+
+func structToMap(in interface{}) map[string]interface{} {
+	b, _ := json.Marshal(in)
+
+	var m map[string]interface{}
+	json.Unmarshal(b, &m)
+	return m
+}
