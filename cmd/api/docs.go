@@ -92,6 +92,10 @@ type LoginResponse struct {
 	AccessToken string `json:"acessToken"`
 }
 
+type GetUserResponse struct {
+	data UserResponseDTO `json:"data"`
+}
+
 type GetBooksResponse struct {
 	Data     []BookResponseDTO `json:"data"`
 	Metadata MetadataDto       `json:"metadata"`

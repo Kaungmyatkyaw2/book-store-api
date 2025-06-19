@@ -55,6 +55,8 @@ definitions:
       metadata:
         $ref: '#/definitions/main.MetadataDto'
     type: object
+  main.GetUserResponse:
+    type: object
   main.GoogleLoginResponse:
     properties:
       url:
@@ -254,6 +256,27 @@ paths:
           schema:
             $ref: '#/definitions/main.InternalServerErrorResponse'
       summary: Log in to an account
+      tags:
+      - Authentication
+  /v1/auth/me:
+    get:
+      description: Get current logged in user information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get Current Loggined User successfully
+          schema:
+            $ref: '#/definitions/main.GetUserResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get me
       tags:
       - Authentication
   /v1/auth/refresh:

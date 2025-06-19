@@ -165,6 +165,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/me": {
+            "get": {
+                "description": "Get current logged in user information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get me",
+                "responses": {
+                    "200": {
+                        "description": "Get Current Loggined User successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/refresh": {
             "post": {
                 "description": "Refresh Previous Access Token",
@@ -611,6 +643,9 @@ const docTemplate = `{
                 }
             }
         },
+        "main.GetUserResponse": {
+            "type": "object"
+        },
         "main.GoogleLoginResponse": {
             "type": "object",
             "properties": {
@@ -780,7 +815,7 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is book store API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-
+	
 }
 
 func init() {

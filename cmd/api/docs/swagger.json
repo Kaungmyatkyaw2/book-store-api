@@ -159,6 +159,38 @@
                 }
             }
         },
+        "/v1/auth/me": {
+            "get": {
+                "description": "Get current logged in user information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get me",
+                "responses": {
+                    "200": {
+                        "description": "Get Current Loggined User successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/refresh": {
             "post": {
                 "description": "Refresh Previous Access Token",
@@ -604,6 +636,9 @@
                     "$ref": "#/definitions/main.MetadataDto"
                 }
             }
+        },
+        "main.GetUserResponse": {
+            "type": "object"
         },
         "main.GoogleLoginResponse": {
             "type": "object",

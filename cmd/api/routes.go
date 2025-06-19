@@ -23,6 +23,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/auth/google", app.googleLoginHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/auth/google/callback", app.googleCallbackHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/auth/refresh", app.refreshTokenHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/auth/me", app.requireActivatedUser(app.getMe))
 
 	router.HandlerFunc(http.MethodGet, "/v1/books", app.getBooksHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/books/:id", app.getBookByIDHandler)

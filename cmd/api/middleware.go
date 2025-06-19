@@ -35,6 +35,8 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			switch {
 			case strings.HasPrefix(err.Error(), "invalid jwt"):
 				app.invalidAuthenticationTokenResponse(w, r)
+			case strings.Contains(err.Error(), "token is expired"):
+				app.invalidAuthenticationTokenResponse(w, r)
 			default:
 				app.serverErrorResponse(w, r, err)
 
