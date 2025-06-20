@@ -691,7 +691,12 @@ const docTemplate = `{
             }
         },
         "main.GetUserResponse": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/main.UserResponseDTO"
+                }
+            }
         },
         "main.GoogleLoginResponse": {
             "type": "object",

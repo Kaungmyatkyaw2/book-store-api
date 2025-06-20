@@ -93,7 +93,7 @@ type LoginResponse struct {
 }
 
 type GetUserResponse struct {
-	data UserResponseDTO `json:"data"`
+	Data UserResponseDTO `json:"data"`
 }
 
 type GetBooksResponse struct {

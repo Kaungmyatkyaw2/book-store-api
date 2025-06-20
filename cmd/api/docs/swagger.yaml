@@ -56,6 +56,9 @@ definitions:
         $ref: '#/definitions/main.MetadataDto'
     type: object
   main.GetUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/main.UserResponseDTO'
     type: object
   main.GoogleLoginResponse:
     properties:
