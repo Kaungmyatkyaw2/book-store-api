@@ -60,6 +60,19 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 
 }
 
+// GetBooksByUser godoc
+// @Summary Get All Books By User
+// @Description Get Created Books By Specific User
+// @Tags Users
+// @Produce  json
+// @Param id path int true "Book ID"
+// @Param        page   query     int     false  "Page number (default: 1)"
+// @Param        limit  query     int     false  "Items per page (default: 10)"
+// @Param        sort   query     string  false  "Sort by field, e.g. 'name' or '-createdAt' for descending"
+// @Success 200 {object} GetBooksResponse "Fetched Books successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 404 {object} GeneralErrorResponse "Content Not Found Error"
+// @Router /v1/users/{id}/books [get]
 func (app *application) getBooksByUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := app.readIDParam(r)

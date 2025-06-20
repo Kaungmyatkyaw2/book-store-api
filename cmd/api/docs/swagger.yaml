@@ -549,6 +549,45 @@ paths:
       summary: Get user by id
       tags:
       - Users
+  /v1/users/{id}/books:
+    get:
+      description: Get Created Books By Specific User
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by field, e.g. 'name' or '-createdAt' for descending
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fetched Books successfully
+          schema:
+            $ref: '#/definitions/main.GetBooksResponse'
+        "404":
+          description: Content Not Found Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get All Books By User
+      tags:
+      - Users
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

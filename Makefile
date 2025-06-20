@@ -23,11 +23,13 @@ db/migrations/up: confirm
 	@echo 'Running up migrations...'
 	migrate -path ./migrations -database ${DB_DSN} up
 
-.PHONY: swagger/generate 
-swagger/generate:
-	cd ./cmd/api/ && swag init
 
 
 .PHONY: docker/build
 docker/build: confirm 
 	docker-compose --env-file .env.docker up --build
+
+.PHONY: swagger/generate 
+swagger/generate:
+	cd ./cmd/api/ && swag init
+
