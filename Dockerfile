@@ -1,6 +1,4 @@
-FROM golang:1.22-alpine 
-
-ENV GO111MODULE=on
+FROM golang:1.24.3-alpine
 
 WORKDIR /app 
 
@@ -9,8 +7,8 @@ RUN go mod download
 
 COPY . . 
 
-RUN go build -o main .
+RUN go build -o main ./cmd/api
 
 EXPOSE 4000
 
-CMD ["./main"]
+CMD ["/app/main"]

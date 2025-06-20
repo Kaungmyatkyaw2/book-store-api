@@ -1,5 +1,3 @@
-include .envrc 
-
 .PHONY: confirm
 confirm:
 	@echo -n 'Are you sure? [y/N] ' && read ans && [ $${ans:-N} = y ]
@@ -7,7 +5,7 @@ confirm:
 
 .PHONY: run/api
 run/api: 
-	go run ./cmd/api -db-dsn=${DB_DSN} -jwt-secret=${JWT_SECRET} -oauth-redirect-url=${GOOGLE_OAUTH_REDIRECT_URL} -oauth-client-id=${GOOGLE_OAUTH_CLIENT_ID} -oauth-client-secret=${GOOGLE_OAUTH_CLIENT_SECRET}
+	go run ./cmd/api
 
 
 .PHONY: db/migrations/new
@@ -28,3 +26,8 @@ db/migrations/up: confirm
 .PHONY: swagger/generate 
 swagger/generate:
 	cd ./cmd/api/ && swag init
+
+
+.PHONY: docker/build
+docker/build: confirm 
+	docker-compose --env-file .env.docker up --build

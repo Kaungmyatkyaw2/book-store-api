@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"flag"
 	"sync"
 	"time"
 
@@ -66,30 +65,9 @@ type application struct {
 func main() {
 
 	var cfg config
+	loadConfig(&cfg)
 
 	logger := hclog.Default()
-
-	flag.IntVar(&cfg.port, "port", 4000, "API server port.")
-	flag.StringVar(&cfg.env, "env", "development", "environment")
-	flag.StringVar(&cfg.db.dsn, "db-dsn", "", "Postgresql DSN")
-
-	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
-	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
-	flag.StringVar(&cfg.db.maxIdleTime, "db-max-idle-time", "15m", "PostgreSQL max connection idle time")
-
-	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP host")
-	flag.IntVar(&cfg.smtp.port, "smtp-port", 25, "SMTP port")
-	flag.StringVar(&cfg.smtp.username, "smtp-username", "74644856878fe8", "SMTP username")
-	flag.StringVar(&cfg.smtp.password, "smtp-password", "2eda21f9e2176d", "SMTP password")
-	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Greenlight <no-reply@greenlight.eillion.net>", "SMTP sender")
-
-	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "JWT secret")
-
-	flag.StringVar(&cfg.googleOauth.redirectUrl, "oauth-redirect-url", "http://localhost:4000/v1/auth/google/callback", "Google oauth redirect url")
-	flag.StringVar(&cfg.googleOauth.clientID, "oauth-client-id", "", "Google oauth client id")
-	flag.StringVar(&cfg.googleOauth.clientSecret, "oauth-client-secret", "", "Google oauth client secret")
-
-	flag.Parse()
 
 	db, err := openDB(cfg)
 

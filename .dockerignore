@@ -1,0 +1,45 @@
+# Ignore everything by default
+*
+
+# Allow these files/directories
+!/.env
+!/migrations/
+!/db-init/
+!/go.mod
+!/go.sum
+!/main.go
+!/cmd/
+!/internal/
+
+# Development files to ignore
+.git/
+.gitignore
+.dockerignore
+*.md
+*.txt
+*.log
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
+
+# Build artifacts
+bin/
+dist/
+*.exe
+*.test
+
+# Environment files (except the one we want)
+.env.local
+.env.*
+!.env.production  # Example: if you want to specifically allow this
+
+# Dependency directories (if applicable)
+vendor/
+node_modules/
+
+# Ignore local database files
+*.db
+*.sqlite
+postgres-data/  # If you're using local bind mounts
