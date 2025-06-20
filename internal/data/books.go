@@ -31,19 +31,32 @@ type BookModel struct {
 	DB *sql.DB
 }
 
-func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, error) {
-	query := fmt.Sprintf(`
+func getAllBooks(m BookModel, title string, filters Filters, userID int64) ([]*Book, *Metadata, error) {
+	query := `
 	SELECT count(*) OVER(), id,created_at,title,cover_picture,user_id,version, is_published, published_at 
 	FROM books	
 	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '') AND is_published = true
-	ORDER BY %s %s, id ASC
-	LIMIT $2 OFFSET $3
-	`, filters.sortColumn(), filters.sortDirecton())
+	`
+
+	args := []any{title}
+
+	if userID != -1 {
+		query += ` AND user_id = $2`
+		args = append(args, userID)
+	}
+
+	argsLength := len(args)
+
+	query += fmt.Sprintf(`
+		ORDER BY %s %s, id ASC
+		LIMIT $%d OFFSET $%d
+	`, filters.sortColumn(), filters.sortDirecton(), argsLength+1, argsLength+2)
+
+	args = append(args, filters.limit())
+	args = append(args, filters.offset())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-
-	args := []any{title, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -84,7 +97,14 @@ func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, er
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
 	return books, &metadata, nil
+}
 
+func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, error) {
+	return getAllBooks(m, title, filters, -1)
+}
+
+func (m BookModel) GetAllByUser(title string, filters Filters, userID int64) ([]*Book, *Metadata, error) {
+	return getAllBooks(m, title, filters, userID)
 }
 
 func (m BookModel) Get(id int64) (*Book, error) {

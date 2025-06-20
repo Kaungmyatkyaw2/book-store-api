@@ -515,6 +515,37 @@ paths:
       summary: Health Check The API
       tags:
       - Healthcheck
+  /v1/users/{id}:
+    get:
+      description: Get specific user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Get Specific User successfully
+          schema:
+            $ref: '#/definitions/main.GetUserResponse'
+        "400":
+          description: BadRequest Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get user by id
+      tags:
+      - Users
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

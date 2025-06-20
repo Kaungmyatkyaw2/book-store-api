@@ -154,6 +154,8 @@ func (app *application) readString(qs url.Values, key string, defaultValue strin
 func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
 	s := qs.Get(key)
 
+	app.logger.Debug("S : ", s)
+
 	if s == "" {
 		return defaultValue
 	}

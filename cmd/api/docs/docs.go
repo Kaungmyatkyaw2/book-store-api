@@ -554,6 +554,53 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/users/{id}": {
+            "get": {
+                "description": "Get specific user by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get Specific User successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -815,7 +862,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "This is book store API built using Go and httprouter",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	
 }
 
 func init() {
