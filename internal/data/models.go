@@ -34,16 +34,22 @@ type IBookModel interface {
 	Update(book *Book) error
 }
 
+type IChapterModel interface {
+	Insert(chapter *Chapter) error
+}
+
 type Models struct {
-	Users  IUserModel
-	Tokens ITokenModel
-	Books  IBookModel
+	Users    IUserModel
+	Tokens   ITokenModel
+	Books    IBookModel
+	Chapters IChapterModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
-		Users:  UserModel{DB: db},
-		Tokens: TokenModel{DB: db},
-		Books:  BookModel{DB: db},
+		Users:    UserModel{DB: db},
+		Tokens:   TokenModel{DB: db},
+		Books:    BookModel{DB: db},
+		Chapters: ChapterModel{DB: db},
 	}
 }

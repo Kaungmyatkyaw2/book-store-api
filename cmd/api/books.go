@@ -193,8 +193,6 @@ func (app *application) createBookHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	app.logger.Info("UseID: ", user.ID)
-
 	book := &data.Book{
 		Title:        input.Title,
 		CoverPicture: input.CoverPicture,

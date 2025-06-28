@@ -34,5 +34,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPatch, "/v1/books/:id", app.requireActivatedUser(app.updateBookHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/books/:id", app.requireActivatedUser(app.deleteBookHandler))
 
+	router.HandlerFunc(http.MethodPost, "/v1/chapters", app.requireActivatedUser(app.createChapterHandler))
+
 	return app.authenticate(router)
 }

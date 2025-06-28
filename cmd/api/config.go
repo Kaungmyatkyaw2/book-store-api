@@ -2,13 +2,20 @@ package main
 
 import (
 	"flag"
+	"log"
 	"os"
 	"strconv"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/joho/godotenv"
 )
 
 func loadConfig(cfg *config) {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	flag.IntVar(&cfg.port, "port", getIntEnv("PORT", 4000), "API server port.")
 	flag.StringVar(&cfg.env, "env", os.Getenv("ENV"), "environment")
