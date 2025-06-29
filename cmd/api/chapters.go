@@ -9,6 +9,28 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
 )
 
+func (app *application) getChaptersByBookHandler(w http.ResponseWriter, r *http.Request) {
+	bookId, err := app.readIDParam(r)
+
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	chapters, err := app.models.Chapters.GetByBookId(bookId)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": chapters}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+}
+
 func (app *application) createChapterHandler(w http.ResponseWriter, r *http.Request) {
 	user := app.contextGetUser(r)
 

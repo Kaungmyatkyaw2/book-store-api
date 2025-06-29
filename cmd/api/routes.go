@@ -33,6 +33,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/books", app.requireActivatedUser(app.createBookHandler))
 	router.HandlerFunc(http.MethodPatch, "/v1/books/:id", app.requireActivatedUser(app.updateBookHandler))
 	router.HandlerFunc(http.MethodDelete, "/v1/books/:id", app.requireActivatedUser(app.deleteBookHandler))
+	router.HandlerFunc(http.MethodGet, "/v1/books/:id/chapters", app.getChaptersByBookHandler)
 
 	router.HandlerFunc(http.MethodPost, "/v1/chapters", app.requireActivatedUser(app.createChapterHandler))
 

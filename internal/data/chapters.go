@@ -13,7 +13,7 @@ type Chapter struct {
 	ChapterNo   int64     `json:"chapterNo"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	Content     string    `json:"content"`
+	Content     *string   `json:"content"`
 	BookID      int64     `json:"bookId"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
@@ -50,4 +50,54 @@ func (m ChapterModel) Insert(chapter *Chapter) error {
 	defer cancel()
 
 	return m.DB.QueryRowContext(ctx, query, args...).Scan(&chapter.ID, &chapter.CreatedAt, &chapter.Version)
+}
+
+func (m ChapterModel) GetByBookId(bookId int64) ([]*Chapter, error) {
+	query := `
+		SELECT id, created_at, updated_at, title, description, chapter_no, content, book_id, version
+		FROM chapters 
+		WHERE book_id = $1
+	`
+
+	args := []any{bookId}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	chapters := []*Chapter{}
+
+	for rows.Next() {
+		var chapter Chapter
+		err := rows.Scan(
+			&chapter.ID,
+			&chapter.CreatedAt,
+			&chapter.UpdatedAt,
+			&chapter.Title,
+			&chapter.Description,
+			&chapter.ChapterNo,
+			&chapter.Content,
+			&chapter.BookID,
+			&chapter.Version,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		chapters = append(chapters, &chapter)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return chapters, nil
+
 }
