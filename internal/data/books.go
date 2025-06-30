@@ -157,7 +157,7 @@ func (m BookModel) Insert(book *Book) error {
 func (m BookModel) Update(book *Book) error {
 	query := `
 		UPDATE books 
-		SET title = $1, cover_picture = $2, is_published = $3, published_at = $4
+		SET title = $1, cover_picture = $2, is_published = $3, published_at = $4, version = version + 1
 		WHERE id = $5 AND version = $6
 		RETURNING version
 	`

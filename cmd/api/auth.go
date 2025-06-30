@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -85,6 +86,8 @@ func (app *application) registerUserHandler(w http.ResponseWriter, r *http.Reque
 			"activationToken": token.Plaintext,
 			"userID":          user.ID,
 		}
+
+		fmt.Println("User Email", user.Email)
 
 		err = app.mailer.Send(user.Email, "user_welcome.tmpl", data)
 		if err != nil {

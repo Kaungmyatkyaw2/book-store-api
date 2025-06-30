@@ -37,6 +37,8 @@ type IBookModel interface {
 type IChapterModel interface {
 	Insert(chapter *Chapter) error
 	GetByBookId(bookId int64) ([]*Chapter, error)
+	Get(id int64) (*Chapter, error)
+	Update(chapter *Chapter) error
 }
 
 type Models struct {

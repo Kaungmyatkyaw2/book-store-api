@@ -279,6 +279,18 @@ func (app *application) updateBookHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	if input.CoverPicture != nil {
+		book.CoverPicture = *input.CoverPicture
+	}
+
+	if input.Title != nil {
+		book.Title = *input.Title
+	}
+
+	if input.IsPublished != nil {
+		book.IsPublished = *input.IsPublished
+	}
+
 	v := validator.New()
 
 	if data.ValidateBook(v, book); !v.IsValid() {

@@ -29,7 +29,7 @@ func loadConfig(cfg *config) {
 	flag.IntVar(&cfg.smtp.port, "smtp-port", getIntEnv("SMTP_PORT", 25), "SMTP port")
 	flag.StringVar(&cfg.smtp.username, "smtp-username", os.Getenv("SMTP_USERNAME"), "SMTP username")
 	flag.StringVar(&cfg.smtp.password, "smtp-password", os.Getenv("SMTP_PASSWORD"), "SMTP password")
-	flag.StringVar(&cfg.smtp.sender, "smtp-sender", os.Getenv("Greenlight <no-reply@greenlight.eillion.net>"), "SMTP sender")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", os.Getenv("SMTP_SENDER"), "SMTP sender")
 
 	flag.StringVar(&cfg.jwt.secret, "jwt-secret", os.Getenv("JWT_SECRET"), "JWT secret")
 

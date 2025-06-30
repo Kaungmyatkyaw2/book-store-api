@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
@@ -15,6 +16,7 @@ type Chapter struct {
 	Description string    `json:"description"`
 	Content     *string   `json:"content"`
 	BookID      int64     `json:"bookId"`
+	UserID      int64     `json:"userId"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	Version     int       `json:"-"`
@@ -38,12 +40,12 @@ func ValidateChapter(v *validator.Validator, chapter *Chapter) {
 
 func (m ChapterModel) Insert(chapter *Chapter) error {
 	query := `
-		INSERT INTO chapters (title,description,book_id)
-		VALUES ($1,$2,$3)
+		INSERT INTO chapters (title,description,book_id,user_id)
+		VALUES ($1,$2,$3,$4)
 		RETURNING id,created_at, version
 	`
 
-	args := []any{chapter.Title, chapter.Description, chapter.BookID}
+	args := []any{chapter.Title, chapter.Description, chapter.BookID, chapter.UserID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
@@ -54,7 +56,7 @@ func (m ChapterModel) Insert(chapter *Chapter) error {
 
 func (m ChapterModel) GetByBookId(bookId int64) ([]*Chapter, error) {
 	query := `
-		SELECT id, created_at, updated_at, title, description, chapter_no, content, book_id, version
+		SELECT id, created_at, updated_at, title, description, chapter_no, content, book_id,user_id, version
 		FROM chapters 
 		WHERE book_id = $1
 	`
@@ -84,6 +86,7 @@ func (m ChapterModel) GetByBookId(bookId int64) ([]*Chapter, error) {
 			&chapter.ChapterNo,
 			&chapter.Content,
 			&chapter.BookID,
+			&chapter.UserID,
 			&chapter.Version,
 		)
 
@@ -100,4 +103,80 @@ func (m ChapterModel) GetByBookId(bookId int64) ([]*Chapter, error) {
 
 	return chapters, nil
 
+}
+
+func (m ChapterModel) Get(id int64) (*Chapter, error) {
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+
+	query := `
+		SELECT id, created_at, updated_at, title, description, chapter_no, content, book_id,user_id, version
+		FROM chapters 
+		WHERE id = $1
+	`
+
+	var chapter Chapter
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&chapter.ID,
+		&chapter.CreatedAt,
+		&chapter.UpdatedAt,
+		&chapter.Title,
+		&chapter.Description,
+		&chapter.ChapterNo,
+		&chapter.Content,
+		&chapter.BookID,
+		&chapter.UserID,
+		&chapter.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &chapter, nil
+
+}
+
+func (m ChapterModel) Update(chapter *Chapter) error {
+	query := `
+		UPDATE chapters 
+		SET title = $1, description = $2, content = $3, updated_at = NOW(), version = version + 1
+		WHERE id = $4 AND version = $5
+		RETURNING version
+	`
+
+	args := []interface{}{
+		chapter.Title,
+		chapter.Description,
+		chapter.Content,
+		chapter.ID,
+		chapter.Version,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&chapter.Version)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+
+	return nil
 }
