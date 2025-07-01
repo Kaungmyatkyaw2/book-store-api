@@ -39,6 +39,7 @@ type IChapterModel interface {
 	GetByBookId(bookId int64) ([]*Chapter, error)
 	Get(id int64) (*Chapter, error)
 	Update(chapter *Chapter) error
+	Delete(id int64) error
 }
 
 type Models struct {

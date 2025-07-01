@@ -259,3 +259,63 @@ func (app *application) updateChapterHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 }
+
+// Deletechapter godoc
+// @Summary Delete Chapter
+// @Description Delete Chapter
+// @Tags Chapters
+// @Produce  json
+// @Param id path int true "Chapter ID"
+// @Success 200 {object} DeleteSuccessResponse "Deleted chapter successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 403 {object} GeneralErrorResponse "Permission Error"
+// @Router /v1/chapters/{id} [delete]
+func (app *application) deleteChapterHandler(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+
+	id, err := app.readIDParam(r)
+
+	if err != nil {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	chapter, err := app.models.Chapters.Get(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+
+		return
+	}
+
+	if chapter.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.Chapters.Delete(id)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"message": "chapter successfully deleted"}, nil)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+}
