@@ -65,7 +65,7 @@ func (app *application) getBooksHandler(w http.ResponseWriter, r *http.Request) 
 // @Description Get Created Books By Specific User
 // @Tags Users
 // @Produce  json
-// @Param id path int true "Book ID"
+// @Param id path int true "User ID"
 // @Param        page   query     int     false  "Page number (default: 1)"
 // @Param        limit  query     int     false  "Items per page (default: 10)"
 // @Param        sort   query     string  false  "Sort by field, e.g. 'name' or '-createdAt' for descending"
@@ -126,7 +126,7 @@ func (app *application) getBooksByUser(w http.ResponseWriter, r *http.Request) {
 // @Tags Books
 // @Produce  json
 // @Param id path int true "Book ID"
-// @Success 200 {object} BookResponse "User activated success"
+// @Success 200 {object} BookResponse "Fetch book success"
 // @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
 // @Failure 404 {object} GeneralErrorResponse "Book not found"
 // @Router /v1/books/{id} [get]

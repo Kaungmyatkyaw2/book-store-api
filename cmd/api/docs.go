@@ -33,6 +33,19 @@ type BookResponseDTO struct {
 	PublishedAt  *time.Time `json:"publishedAt"`
 }
 
+type ChapterResponseDTO struct {
+	ID          int64     `json:"id"`
+	ChapterNo   int64     `json:"chapterNo"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Content     *string   `json:"content"`
+	BookID      int64     `json:"bookId"`
+	UserID      int64     `json:"userId"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	Version     int       `json:"-"`
+}
+
 // Requests Parts
 
 type RegisterUserRequestBody struct {
@@ -60,6 +73,17 @@ type UpdateBookBody struct {
 	CoverPicture string     `json:"coverPicture"`
 	IsPublished  bool       `json:"isPublished"`
 	PublishedAt  *time.Time `json:"publishedAt"`
+}
+
+type CreateChapterBody struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	BookID      string `json:"bookId"`
+}
+type UpdateChapterBody struct {
+	Title       string `json:"title"`
+	Description string `json:"coverPicture"`
+	Content     string `json:"content"`
 }
 
 // Responses
@@ -107,4 +131,12 @@ type BookResponse struct {
 
 type DeleteSuccessResponse struct {
 	Message string `json:"message"`
+}
+
+type GetChaptersResponse struct {
+	Data []ChapterResponseDTO `json:"data"`
+}
+
+type GetChapterResponse struct {
+	Data ChapterResponseDTO `json:"data"`
 }

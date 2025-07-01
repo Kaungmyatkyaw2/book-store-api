@@ -392,7 +392,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "User activated success",
+                        "description": "Fetch book success",
                         "schema": {
                             "$ref": "#/definitions/main.BookResponse"
                         }
@@ -529,6 +529,215 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/books/{id}/chapters": {
+            "get": {
+                "description": "Get Created Chapters By Specific Book",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chapters"
+                ],
+                "summary": "Get Specific Book's Chapters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Book ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Chapters successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetChaptersResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Content Not Found Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/chapters": {
+            "post": {
+                "description": "Create Chapters",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chapters"
+                ],
+                "summary": "Create Chapters",
+                "parameters": [
+                    {
+                        "description": "Chapter data to create",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.CreateChapterBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book creation success",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetChapterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Permission Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/chapters/{id}": {
+            "get": {
+                "description": "Get Specific Chapter By ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chapters"
+                ],
+                "summary": "Get Chapter By ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Chapter ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched chapter success",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetChapterResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update Chapter",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Chapters"
+                ],
+                "summary": "Update Chapter",
+                "parameters": [
+                    {
+                        "description": "Chapter data to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.UpdateChapterBody"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Chapter ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated chapter successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.BookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Permission Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.ValidationErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/healthcheck": {
             "get": {
                 "description": "Returns an object that include environment and status of the API",
@@ -615,7 +824,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Book ID",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -708,10 +917,56 @@ const docTemplate = `{
                 }
             }
         },
+        "main.ChapterResponseDTO": {
+            "type": "object",
+            "properties": {
+                "bookId": {
+                    "type": "integer"
+                },
+                "chapterNo": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "main.CreateBookBody": {
             "type": "object",
             "properties": {
                 "coverPicture": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.CreateChapterBody": {
+            "type": "object",
+            "properties": {
+                "bookId": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "title": {
@@ -746,6 +1001,25 @@ const docTemplate = `{
                 },
                 "metadata": {
                     "$ref": "#/definitions/main.MetadataDto"
+                }
+            }
+        },
+        "main.GetChapterResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/main.ChapterResponseDTO"
+                }
+            }
+        },
+        "main.GetChaptersResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/main.ChapterResponseDTO"
+                    }
                 }
             }
         },
@@ -864,6 +1138,20 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "publishedAt": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.UpdateChapterBody": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "coverPicture": {
                     "type": "string"
                 },
                 "title": {

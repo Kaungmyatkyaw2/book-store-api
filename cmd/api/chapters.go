@@ -9,6 +9,16 @@ import (
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
 )
 
+// GetChaptersByBook godoc
+// @Summary Get Specific Book's Chapters
+// @Description Get Created Chapters By Specific Book
+// @Tags Chapters
+// @Produce  json
+// @Param id path int true "Book ID"
+// @Success 200 {object} GetChaptersResponse "Fetched Chapters successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 404 {object} GeneralErrorResponse "Content Not Found Error"
+// @Router /v1/books/{id}/chapters [get]
 func (app *application) getChaptersByBookHandler(w http.ResponseWriter, r *http.Request) {
 	bookId, err := app.readIDParam(r)
 
@@ -31,6 +41,16 @@ func (app *application) getChaptersByBookHandler(w http.ResponseWriter, r *http.
 	}
 }
 
+// GetChapterById godoc
+// @Summary Get Chapter By ID
+// @Description Get Specific Chapter By ID
+// @Tags Chapters
+// @Produce  json
+// @Param id path int true "Chapter ID"
+// @Success 200 {object} GetChapterResponse "Fetched chapter success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 404 {object} GeneralErrorResponse "Book not found"
+// @Router /v1/chapters/{id} [get]
 func (app *application) getChapterByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 
@@ -60,6 +80,19 @@ func (app *application) getChapterByIDHandler(w http.ResponseWriter, r *http.Req
 	}
 }
 
+// CreateChapter godoc
+// @Summary Create Chapters
+// @Description Create Chapters
+// @Tags Chapters
+// @Param request body CreateChapterBody true "Chapter data to create"
+// @Produce  json
+// @Success 200 {object} GetChapterResponse "Book creation success"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 403 {object} GeneralErrorResponse "Permission Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
+// @Router /v1/chapters [post]
 func (app *application) createChapterHandler(w http.ResponseWriter, r *http.Request) {
 	user := app.contextGetUser(r)
 
@@ -131,6 +164,20 @@ func (app *application) createChapterHandler(w http.ResponseWriter, r *http.Requ
 
 }
 
+// UpdateChapter godoc
+// @Summary Update Chapter
+// @Description Update Chapter
+// @Tags Chapters
+// @Param request body UpdateChapterBody true "Chapter data to update"
+// @Param id path int true "Chapter ID"
+// @Produce  json
+// @Success 200 {object} BookResponse "Updated chapter successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 401 {object} GeneralErrorResponse "Unauthenticated Error"
+// @Failure 400 {object} GeneralErrorResponse "Bad Request Error"
+// @Failure 403 {object} GeneralErrorResponse "Permission Error"
+// @Failure 422 {object} ValidationErrorResponse "Validation Error"
+// @Router /v1/chapters/{id} [patch]
 func (app *application) updateChapterHandler(w http.ResponseWriter, r *http.Request) {
 	user := app.contextGetUser(r)
 

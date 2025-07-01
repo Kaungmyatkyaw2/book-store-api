@@ -29,9 +29,39 @@ definitions:
       userId:
         type: integer
     type: object
+  main.ChapterResponseDTO:
+    properties:
+      bookId:
+        type: integer
+      chapterNo:
+        type: integer
+      content:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+    type: object
   main.CreateBookBody:
     properties:
       coverPicture:
+        type: string
+      title:
+        type: string
+    type: object
+  main.CreateChapterBody:
+    properties:
+      bookId:
+        type: string
+      description:
         type: string
       title:
         type: string
@@ -54,6 +84,18 @@ definitions:
         type: array
       metadata:
         $ref: '#/definitions/main.MetadataDto'
+    type: object
+  main.GetChapterResponse:
+    properties:
+      data:
+        $ref: '#/definitions/main.ChapterResponseDTO'
+    type: object
+  main.GetChaptersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/main.ChapterResponseDTO'
+        type: array
     type: object
   main.GetUserResponse:
     properties:
@@ -130,6 +172,15 @@ definitions:
       isPublished:
         type: boolean
       publishedAt:
+        type: string
+      title:
+        type: string
+    type: object
+  main.UpdateChapterBody:
+    properties:
+      content:
+        type: string
+      coverPicture:
         type: string
       title:
         type: string
@@ -443,7 +494,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: User activated success
+          description: Fetch book success
           schema:
             $ref: '#/definitions/main.BookResponse'
         "404":
@@ -501,6 +552,144 @@ paths:
       summary: Update Book
       tags:
       - Books
+  /v1/books/{id}/chapters:
+    get:
+      description: Get Created Chapters By Specific Book
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fetched Chapters successfully
+          schema:
+            $ref: '#/definitions/main.GetChaptersResponse'
+        "404":
+          description: Content Not Found Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get Specific Book's Chapters
+      tags:
+      - Chapters
+  /v1/chapters:
+    post:
+      description: Create Chapters
+      parameters:
+      - description: Chapter data to create
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateChapterBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Book creation success
+          schema:
+            $ref: '#/definitions/main.GetChapterResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "403":
+          description: Permission Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Create Chapters
+      tags:
+      - Chapters
+  /v1/chapters/{id}:
+    get:
+      description: Get Specific Chapter By ID
+      parameters:
+      - description: Chapter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fetched chapter success
+          schema:
+            $ref: '#/definitions/main.GetChapterResponse'
+        "404":
+          description: Book not found
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Get Chapter By ID
+      tags:
+      - Chapters
+    patch:
+      description: Update Chapter
+      parameters:
+      - description: Chapter data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/main.UpdateChapterBody'
+      - description: Chapter ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated chapter successfully
+          schema:
+            $ref: '#/definitions/main.BookResponse'
+        "400":
+          description: Bad Request Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "401":
+          description: Unauthenticated Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "403":
+          description: Permission Error
+          schema:
+            $ref: '#/definitions/main.GeneralErrorResponse'
+        "422":
+          description: Validation Error
+          schema:
+            $ref: '#/definitions/main.ValidationErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/main.InternalServerErrorResponse'
+      summary: Update Chapter
+      tags:
+      - Chapters
   /v1/healthcheck:
     get:
       description: Returns an object that include environment and status of the API
@@ -553,7 +742,7 @@ paths:
     get:
       description: Get Created Books By Specific User
       parameters:
-      - description: Book ID
+      - description: User ID
         in: path
         name: id
         required: true
