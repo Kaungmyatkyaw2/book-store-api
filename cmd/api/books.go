@@ -78,6 +78,7 @@ func (app *application) getBooksByUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := app.readIDParam(r)
 
 	if err != nil {
+		app.logger.Info("Error: ", err)
 		app.notFoundResponse(w, r)
 		return
 	}
@@ -105,7 +106,66 @@ func (app *application) getBooksByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	books, metadata, err := app.models.Books.GetAllByUser(input.Title, input.Filters, userID)
+	books, metadata, err := app.models.Books.GetAllByUser(input.Title, input.Filters, userID, app.boolPtr(true))
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": books, "metadata": metadata}, nil)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+
+}
+
+// GetMyBook godoc
+// @Summary Get Current's User All Book
+// @Description Get Created Books By Current User
+// @Tags Users
+// @Produce  json
+// @Param        page   query     int     false  "Page number (default: 1)"
+// @Param        limit  query     int     false  "Items per page (default: 10)"
+// @Param        sort   query     string  false  "Sort by field, e.g. 'name' or '-createdAt' for descending"
+// @Success 200 {object} GetBooksResponse "Fetched Books successfully"
+// @Failure 500 {object} InternalServerErrorResponse "Internal Server Error"
+// @Failure 404 {object} GeneralErrorResponse "Content Not Found Error"
+// @Router /v1/users/me/books [get]
+func (app *application) getBooksByCurrentUser(w http.ResponseWriter, r *http.Request) {
+
+	user := app.contextGetUser(r)
+
+	if user == nil {
+		app.authenticationRequiredResponse(w, r)
+		return
+	}
+
+	var input struct {
+		Title string
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Title = app.readString(qs, "title", "")
+
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "limit", 20, v)
+
+	input.Filters.Sort = app.readString(qs, "sort", "created_at")
+
+	input.Filters.SortSafelist = []string{"id", "title", "created_at", "published_at", "-id", "-title", "-created_at", "-published_at"}
+
+	if data.ValidateFilter(v, input.Filters); !v.IsValid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	books, metadata, err := app.models.Books.GetAllByUser(input.Title, input.Filters, user.ID, nil)
 
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

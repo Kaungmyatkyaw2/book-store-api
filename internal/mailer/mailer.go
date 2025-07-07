@@ -3,7 +3,6 @@ package mailer
 import (
 	"bytes"
 	"embed"
-	"fmt"
 	"html/template"
 	"time"
 
@@ -60,9 +59,6 @@ func (m Mailer) Send(receipent, templateFile string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Receipent: ", receipent)
-	fmt.Println("From: ", m.sender)
 
 	msg := mail.NewMessage()
 	msg.SetHeader("To", receipent)

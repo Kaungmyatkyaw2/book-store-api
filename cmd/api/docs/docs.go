@@ -815,6 +815,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/me/books": {
+            "get": {
+                "description": "Get Created Books By Current User",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get Current's User All Book",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page (default: 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field, e.g. 'name' or '-createdAt' for descending",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fetched Books successfully",
+                        "schema": {
+                            "$ref": "#/definitions/main.GetBooksResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Content Not Found Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.GeneralErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/main.InternalServerErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/{id}": {
             "get": {
                 "description": "Get specific user by id",

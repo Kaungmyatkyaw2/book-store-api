@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/Kaungmyatkyaw2/book-store-api/internal/validator"
-	"github.com/julienschmidt/httprouter"
+	"github.com/go-chi/chi/v5"
 )
 
 type envelope map[string]interface{}
@@ -129,20 +129,9 @@ func (app *application) background(fn func()) {
 
 }
 
-func (app *application) readParamInt(r *http.Request, key string) (int64, error) {
-	params := httprouter.ParamsFromContext(r.Context())
-
-	val, err := strconv.ParseInt(params.ByName(key), 10, 64)
-
-	if err != nil {
-		return -1, errors.New("invalid paramerter")
-	}
-
-	return val, nil
-}
-
 func (app *application) readIDParam(r *http.Request) (int64, error) {
-	id, err := app.readParamInt(r, "id")
+
+	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil || id < 1 {
 		return 0, errors.New("invalid id parameter")
 	}
@@ -179,4 +168,8 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 
 	return i
 
+}
+
+func (app *application) boolPtr(b bool) *bool {
+	return &b
 }

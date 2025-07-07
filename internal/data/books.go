@@ -31,12 +31,20 @@ type BookModel struct {
 	DB *sql.DB
 }
 
-func getAllBooks(m BookModel, title string, filters Filters, userID int64) ([]*Book, *Metadata, error) {
+func getAllBooks(m BookModel, title string, filters Filters, userID int64, isPublished *bool) ([]*Book, *Metadata, error) {
 	query := `
 	SELECT count(*) OVER(), id,created_at,title,cover_picture,user_id,version, is_published, published_at 
 	FROM books	
-	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '') AND is_published = true
+	WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple',$1) OR $1 = '')
 	`
+
+	if isPublished != nil {
+		if *isPublished {
+			query += ` AND is_published = true`
+		} else {
+			query += ` AND is_published = false`
+		}
+	}
 
 	args := []any{title}
 
@@ -100,11 +108,13 @@ func getAllBooks(m BookModel, title string, filters Filters, userID int64) ([]*B
 }
 
 func (m BookModel) GetAll(title string, filters Filters) ([]*Book, *Metadata, error) {
-	return getAllBooks(m, title, filters, -1)
+
+	trueFlag := true
+	return getAllBooks(m, title, filters, -1, &trueFlag)
 }
 
-func (m BookModel) GetAllByUser(title string, filters Filters, userID int64) ([]*Book, *Metadata, error) {
-	return getAllBooks(m, title, filters, userID)
+func (m BookModel) GetAllByUser(title string, filters Filters, userID int64, isPublsihed *bool) ([]*Book, *Metadata, error) {
+	return getAllBooks(m, title, filters, userID, isPublsihed)
 }
 
 func (m BookModel) Get(id int64) (*Book, error) {

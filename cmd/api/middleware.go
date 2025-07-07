@@ -82,7 +82,7 @@ func (app *application) requireAuthenticatedUser(next http.HandlerFunc) http.Han
 	})
 }
 
-func (app *application) requireActivatedUser(next http.HandlerFunc) http.HandlerFunc {
+func (app *application) requireActivatedUser(next http.Handler) http.Handler {
 	fn := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := app.contextGetUser(r)
 

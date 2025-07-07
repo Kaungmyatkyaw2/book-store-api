@@ -3,11 +3,11 @@ module github.com/Kaungmyatkyaw2/book-store-api
 go 1.24.3
 
 require (
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-mail/mail/v2 v2.3.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/joho/godotenv v1.5.1
-	github.com/julienschmidt/httprouter v1.3.0
 	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger v1.3.4

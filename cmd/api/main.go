@@ -54,7 +54,7 @@ type application struct {
 
 // @title Book Store API
 // @version 1.0
-// @description This is book store API built using Go and httprouter
+// @description This is book store API built using Go and chi router
 // @host localhost:4000
 // @BasePath /
 

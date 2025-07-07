@@ -3,42 +3,51 @@ package main
 import (
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func (app *application) routes() http.Handler {
-	router := httprouter.New()
+	r := chi.NewRouter()
 
-	router.NotFound = http.HandlerFunc(app.notFoundResponse)
-	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
+	r.Get("/docs/*", httpSwagger.WrapHandler)
 
-	router.Handler("GET", "/docs/*any", httpSwagger.WrapHandler)
+	r.Get("/v1/healthcheck", app.healthCheckHandler)
 
-	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthCheckHandler)
+	r.Route("/v1/auth", func(r chi.Router) {
+		r.Post("/register", app.registerUserHandler)
+		r.Put("/activate", app.activateUserHandler)
+		r.Post("/login", app.loginHandler)
+		r.Get("/google", app.googleLoginHandler)
+		r.Get("/google/callback", app.googleCallbackHandler)
+		r.Post("/refresh", app.refreshTokenHandler)
+		r.With(app.requireActivatedUser).Get("/me", app.getMe)
+	})
 
-	router.HandlerFunc(http.MethodPost, "/v1/auth/register", app.registerUserHandler)
-	router.HandlerFunc(http.MethodPut, "/v1/auth/activate", app.activateUserHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/auth/login", app.loginHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/auth/google", app.googleLoginHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/auth/google/callback", app.googleCallbackHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/auth/refresh", app.refreshTokenHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/auth/me", app.requireActivatedUser(app.getMe))
+	r.Route("/v1/users", func(r chi.Router) {
+		r.Get("/{id}", app.getUser)
+		r.With(app.requireActivatedUser).Get("/me/books", app.getBooksByCurrentUser)
+		r.Get("/{id}/books", app.getBooksByUser)
+	})
 
-	router.HandlerFunc(http.MethodGet, "/v1/users/:id", app.getUser)
-	router.HandlerFunc(http.MethodGet, "/v1/users/:id/books", app.getBooksByUser)
+	r.Route("/v1/books", func(r chi.Router) {
+		r.Get("/", app.getBooksHandler)
+		r.Get("/{id}", app.getBookByIDHandler)
+		r.With(app.requireActivatedUser).Post("/", app.createBookHandler)
+		r.With(app.requireActivatedUser).Patch("/{id}", app.updateBookHandler)
+		r.With(app.requireActivatedUser).Delete("/{id}", app.deleteBookHandler)
+		r.Get("/{id}/chapters", app.getChaptersByBookHandler)
+	})
 
-	router.HandlerFunc(http.MethodGet, "/v1/books", app.getBooksHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/books/:id", app.getBookByIDHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/books", app.requireActivatedUser(app.createBookHandler))
-	router.HandlerFunc(http.MethodPatch, "/v1/books/:id", app.requireActivatedUser(app.updateBookHandler))
-	router.HandlerFunc(http.MethodDelete, "/v1/books/:id", app.requireActivatedUser(app.deleteBookHandler))
-	router.HandlerFunc(http.MethodGet, "/v1/books/:id/chapters", app.getChaptersByBookHandler)
+	r.Route("/v1/chapters", func(r chi.Router) {
+		r.With(app.requireActivatedUser).Post("/", app.createChapterHandler)
+		r.Get("/{id}", app.getChapterByIDHandler)
+		r.With(app.requireActivatedUser).Patch("/{id}", app.updateChapterHandler)
+		r.With(app.requireActivatedUser).Delete("/{id}", app.deleteChapterHandler)
+	})
 
-	router.HandlerFunc(http.MethodPost, "/v1/chapters", app.requireActivatedUser(app.createChapterHandler))
-	router.HandlerFunc(http.MethodGet, "/v1/chapters/:id", app.getChapterByIDHandler)
-	router.HandlerFunc(http.MethodPatch, "/v1/chapters/:id", app.requireActivatedUser(app.updateChapterHandler))
-	router.HandlerFunc(http.MethodDelete, "/v1/chapters/:id", app.requireActivatedUser(app.deleteChapterHandler))
+	r.NotFound(app.notFoundResponse)
+	r.MethodNotAllowed(app.methodNotAllowedResponse)
 
-	return app.authenticate(router)
+	return app.authenticate(r)
 }

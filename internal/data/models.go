@@ -29,7 +29,7 @@ type IBookModel interface {
 	Delete(id int64) error
 	Get(id int64) (*Book, error)
 	GetAll(title string, filters Filters) ([]*Book, *Metadata, error)
-	GetAllByUser(title string, filters Filters, userID int64) ([]*Book, *Metadata, error)
+	GetAllByUser(title string, filters Filters, userID int64, isPublsihed *bool) ([]*Book, *Metadata, error)
 	Insert(book *Book) error
 	Update(book *Book) error
 }
