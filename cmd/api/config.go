@@ -37,6 +37,10 @@ func loadConfig(cfg *config) {
 	flag.StringVar(&cfg.googleOauth.clientID, "oauth-client-id", os.Getenv("GOOGLE_OAUTH_CLIENT_ID"), "Google oauth client id")
 	flag.StringVar(&cfg.googleOauth.clientSecret, "oauth-client-secret", os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"), "Google oauth client secret")
 
+	flag.Float64Var(&cfg.limiter.rps, "limiter-rps", 2, "Rate limiter maximum requests per second")
+	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 4, "Rate limiter maximum burst")
+	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
+
 	flag.Parse()
 }
 

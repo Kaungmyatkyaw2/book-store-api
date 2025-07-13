@@ -41,6 +41,11 @@ type config struct {
 		clientID     string
 		clientSecret string
 	}
+	limiter struct {
+		rps     float64
+		burst   int
+		enabled bool
+	}
 }
 
 type application struct {

@@ -49,5 +49,5 @@ func (app *application) routes() http.Handler {
 	r.NotFound(app.notFoundResponse)
 	r.MethodNotAllowed(app.methodNotAllowedResponse)
 
-	return app.authenticate(r)
+	return app.rateLimit(app.authenticate(r))
 }
