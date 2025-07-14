@@ -1,6 +1,7 @@
 package main
 
 import (
+	"expvar"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -46,8 +47,10 @@ func (app *application) routes() http.Handler {
 		r.With(app.requireActivatedUser).Delete("/{id}", app.deleteChapterHandler)
 	})
 
+	r.Get("/debug/vars", expvar.Handler().ServeHTTP)
+
 	r.NotFound(app.notFoundResponse)
 	r.MethodNotAllowed(app.methodNotAllowedResponse)
 
-	return app.rateLimit(app.authenticate(r))
+	return app.recoverPanic(app.rateLimit(app.authenticate(r)))
 }

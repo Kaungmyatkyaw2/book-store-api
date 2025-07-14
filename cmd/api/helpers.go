@@ -119,7 +119,7 @@ func (app *application) background(fn func()) {
 		defer func() {
 			if err := recover(); err != nil {
 				fmt.Printf("%s", err)
-				app.logger.Error("Something went wrong in this ")
+				app.logger.Error("Something went wrong in background process.")
 			}
 		}()
 
@@ -152,8 +152,6 @@ func (app *application) readString(qs url.Values, key string, defaultValue strin
 
 func (app *application) readInt(qs url.Values, key string, defaultValue int, v *validator.Validator) int {
 	s := qs.Get(key)
-
-	app.logger.Debug("S : ", s)
 
 	if s == "" {
 		return defaultValue

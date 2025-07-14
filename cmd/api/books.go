@@ -78,7 +78,7 @@ func (app *application) getBooksByUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := app.readIDParam(r)
 
 	if err != nil {
-		app.logger.Info("Error: ", err)
+		app.logger.Info("Error in getBooksByUser", "err", err)
 		app.notFoundResponse(w, r)
 		return
 	}
