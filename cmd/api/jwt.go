@@ -33,7 +33,7 @@ func (app *application) setRefreshTokenCookie(w http.ResponseWriter, userID int6
 		Name:     "jwt",
 		Value:    refreshToken,
 		Path:     "/",
-		MaxAge:   3600,
+		MaxAge:   7 * 24 * 3600,
 		HttpOnly: true,
 		Secure:   false,
 		SameSite: http.SameSiteNoneMode,
@@ -69,6 +69,19 @@ func (app *application) issueAccessToken(w http.ResponseWriter, userID int64) er
 	if err := app.setRefreshTokenCookie(w, userID); err != nil {
 		return err
 	}
+
+	cookie := http.Cookie{
+		Name:     "accessToken",
+		Value:    accessToken,
+		Path:     "/",
+		MaxAge:   7 * 24* 3600,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteNoneMode,
+	}
+
+
+	http.SetCookie(w, &cookie)
 
 	return app.writeJSON(w, http.StatusOK, envelope{"accessToken": accessToken}, nil)
 }

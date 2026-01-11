@@ -19,6 +19,7 @@ import (
 
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		
 		w.Header().Add("Vary", "Authorization")
 
 		authorizationHeader := r.Header.Get("Authorization")
@@ -36,6 +37,8 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 		}
 
 		token := headerParts[1]
+
+
 
 		verifiedToken, err := app.verifyJWTToken(token)
 
@@ -173,6 +176,40 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 
+	})
+}
+
+func (app *application) enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		w.Header().Add("Vary", "Origin")
+
+		w.Header().Add("Vary", "Access-Control-Request-Method")
+
+		origin := r.Header.Get("Origin")
+		trustedOrigins := []string{"http://localhost:3000"}
+
+		if origin != "" {
+			for i := range trustedOrigins {
+				if origin == trustedOrigins[i] {
+					w.Header().Set("Access-Control-Allow-Origin", origin)
+					w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+					if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
+						w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, PUT, PATCH, DELETE, GET")
+						w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+
+						w.WriteHeader(http.StatusOK)
+						return
+					}
+
+					break
+
+				}
+			}
+		}
+
+		next.ServeHTTP(w, r)
 	})
 }
 

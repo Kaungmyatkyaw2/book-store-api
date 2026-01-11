@@ -33,7 +33,7 @@ func (app *application) routes() http.Handler {
 
 	r.Route("/v1/books", func(r chi.Router) {
 		r.Get("/", app.getBooksHandler)
-		r.Get("/{id}", app.getBookByIDHandler)
+		r.With(app.requireActivatedUser).Get("/{id}", app.getBookByIDHandler)
 		r.With(app.requireActivatedUser).Post("/", app.createBookHandler)
 		r.With(app.requireActivatedUser).Patch("/{id}", app.updateBookHandler)
 		r.With(app.requireActivatedUser).Delete("/{id}", app.deleteBookHandler)
@@ -52,5 +52,5 @@ func (app *application) routes() http.Handler {
 	r.NotFound(app.notFoundResponse)
 	r.MethodNotAllowed(app.methodNotAllowedResponse)
 
-	return app.recoverPanic(app.rateLimit(app.authenticate(r)))
+	return app.recoverPanic(app.enableCORS(app.rateLimit(app.authenticate(r))))
 }
